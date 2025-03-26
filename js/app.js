@@ -14,7 +14,25 @@ const verbs = [
     { english: "RECLAIM", french: "RÉCUPÉRER" },
     { english: "REIN IN", french: "FREINER" },
     { english: "FREEZE", french: "GELER" },
-    { english: "DRAIN", french: "ASSÉCHER" } 
+    { english: "DRAIN", french: "ASSÉCHER" },
+    { english: "REVOLUTIONIZE", french: "RÉVOLUTIONNER" },
+    { english: "TACKLE", french: "AFFRONTER" },
+    { english: "UNLEASH", french: "LIBÉRER" },
+    { english: "SUPERCHARGE", french: "SURVOLTER" },
+    { english: "MODERNIZE", french: "MODERNISER" },
+    { english: "STREAMLINE", french: "SIMPLIFIER" },
+    { english: "TRANSFORM", french: "TRANSFORMER" },
+    { english: "UNLOCK", french: "DÉBLOQUER" },
+    { english: "DEFEND", french: "DÉFENDRE" },
+    { english: "REBUILD", french: "RECONSTRUIRE" },
+    { english: "IGNITE", french: "ALLUMER" },
+    { english: "EMPOWER", french: "AUTONOMISER" },
+    { english: "CHAMPION", french: "DÉFENDRE" },
+    { english: "HARNESS", french: "EXPLOITER" },
+    { english: "RESTORE", french: "RESTAURER" },
+    { english: "DISRUPT", french: "PERTURBER" },
+    { english: "REVITALIZE", french: "REVITALISER" },
+    { english: "SAFEGUARD", french: "SAUVEGARDER" }
 ];
 
 // Array of nouns with their phrases (including appropriate articles)
@@ -33,14 +51,71 @@ const nouns = [
     { english: "THE RED TAPE", french: "LA BUREAUCRATIE" },
     { english: "GAS PRICES", french: "LES PRIX DU CARBURANT" },
     { english: "THE DEFICIT", french: "LE DÉFICIT" },
-    { english: "WASTE", french: "LE GASPILLAGE" }
+    { english: "WASTE", french: "LE GASPILLAGE" },
+    { english: "RED TAPE", french: "LES FORMALITÉS ADMINISTRATIVES" },
+    { english: "THE SYSTEM", french: "LE SYSTÈME" },
+    { english: "THE ECONOMY", french: "L'ÉCONOMIE" },
+    { english: "INNOVATION", french: "L'INNOVATION" },
+    { english: "EFFICIENCY", french: "L'EFFICACITÉ" },
+    { english: "THE ESTABLISHMENT", french: "L'ESTABLISHMENT" },
+    { english: "SPECIAL INTERESTS", french: "LES INTÉRÊTS PARTICULIERS" },
+    { english: "THE STATUS QUO", french: "LE STATU QUO" },
+    { english: "THE MIDDLE CLASS", french: "LA CLASSE MOYENNE" },
+    { english: "SMALL BUSINESSES", french: "LES PETITES ENTREPRISES" },
+    { english: "FUTURE GENERATIONS", french: "LES GÉNÉRATIONS FUTURES" },
+    { english: "THE BUREAUCRACY", french: "LA BUREAUCRATIE" },
+    { english: "BIG GOVERNMENT", french: "LE GOUVERNEMENT TENTACULAIRE" },
+    { english: "FAMILY VALUES", french: "LES VALEURS FAMILIALES" },
+    { english: "THE CANADIAN DREAM", french: "LE RÊVE AMÉRICAIN" },
+    { english: "OUR DEMOCRACY", french: "NOTRE DÉMOCRATIE" },
+    { english: "REGULATIONS", french: "LES RÈGLEMENTS" },
+    { english: "PROSPERITY", french: "LA PROSPÉRITÉ" },
+    { english: "OPPORTUNITY", french: "L'OPPORTUNITÉ" },
+    { english: "THE GREEN NEW DEAL", french: "LE NOUVEAU PACTE VERT" },
+    { english: "THE DEEP STATE", french: "L'ÉTAT PROFOND" },
+    { english: "POLITICAL CORRECTNESS", french: "LE POLITIQUEMENT CORRECT" },
+    { english: "THE WORKING CLASS", french: "LA CLASSE OUVRIÈRE" },
+    { english: "THE ENVIRONMENT", french: "L'ENVIRONNEMENT" },
+    { english: "THE MILITARY", french: "L'ARMÉE" },
+    { english: "THE POLICE", french: "LA POLICE" },
+    { english: "THE MEDIA", french: "LES MÉDIAS" },
+    { english: "THE ELITE", french: "L'ÉLITE" },
+    { english: "THE NATION", french: "LA NATION" },
+    { english: "THE PEOPLE", french: "LE PEUPLE" },
+    { english: "THE FUTURE", french: "L'AVENIR" },
+    { english: "THE COUNTRY", french: "LE PAYS" },
+    { english: "THE WORLD", french: "LE MONDE" },
+    { english: "THE PLANET", french: "LA PLANÈTE" },
+    { english: "THE UNIVERSE", french: "L'UNIVERS" },
+    { english: "THE GALAXY", french: "LA GALAXIE" },
+    { english: "THE COSMOS", french: "LE COSMOS" },
+    { english: "THE MULTIVERSE", french: "LE MULTIVERS" },
+    { english: "THE 51ST STATE", french: "LE 51e ÉTAT" }
 ];
 
+let lastVerbIndex, lastNounIndex;
 
 // Function to generate a random slogan in both languages
 function generateSlogan() {
-    const randomVerbIndex = Math.floor(Math.random() * verbs.length);
-    const randomNounIndex = Math.floor(Math.random() * nouns.length);
+    let randomVerbIndex, randomNounIndex;
+    let iterations = 0;
+    const MAX_ITERATIONS = 10; // Prevent infinite loop
+    
+    // Keep generating until we get different indices or reach max iterations
+    do {
+        randomVerbIndex = Math.floor(Math.random() * verbs.length);
+        randomNounIndex = Math.floor(Math.random() * nouns.length);
+        iterations++;
+        
+        // If we've tried too many times, just accept what we have
+        if (iterations >= MAX_ITERATIONS) {
+            break;
+        }
+    } while (randomVerbIndex === lastVerbIndex && randomNounIndex === lastNounIndex);
+    
+    // Store current indices for next comparison
+    lastVerbIndex = randomVerbIndex;
+    lastNounIndex = randomNounIndex;
     
     const verb = verbs[randomVerbIndex];
     const noun = nouns[randomNounIndex];
@@ -142,9 +217,6 @@ function adjustFontSizes() {
     const minFrenchSize = 14;
     const maxEnglishSize = 60;
     const maxFrenchSize = 48;
-
-    console.log("Target width:", targetWidth);
-    console.log("English natural width:", englishWidth, "French natural width:", frenchWidth);
     
     // Scale English slogan to fit target width
     let englishScaleFactor = targetWidth / englishWidth;
@@ -154,7 +226,6 @@ function adjustFontSizes() {
         minEnglishSize
     );
     englishSlogan.style.fontSize = `${newEnglishSize}px`;
-    console.log("Adjusting English font size to:", newEnglishSize);
     
     // Scale French slogan accordingly
     let frenchScaleFactor = targetWidth / frenchWidth;
@@ -164,7 +235,6 @@ function adjustFontSizes() {
         minFrenchSize
     );
     frenchSlogan.style.fontSize = `${newFrenchSize}px`;
-    console.log("Adjusting French font size to:", newFrenchSize);
 }
 
 // Function to update the slogan on the page
