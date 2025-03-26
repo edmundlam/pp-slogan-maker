@@ -1,86 +1,52 @@
-// Arrays of verbs and nouns for slogan generation
+// Array of verbs for slogan generation with translations
 const verbs = [
-    "INSPIRE", "BUILD", "LEAD", "CHAMPION", "TRANSFORM",
-    "EMPOWER", "ADVANCE", "SECURE", "PROTECT", "STRENGTHEN",
-    "UNITE", "REFORM", "RESTORE", "REVITALIZE", "DEFEND"
+    { english: "INSPIRE", french: "INSPIRER" },
+    { english: "BUILD", french: "CONSTRUIRE" },
+    { english: "LEAD", french: "DIRIGER" },
+    { english: "CHAMPION", french: "DÉFENDRE" },
+    { english: "TRANSFORM", french: "TRANSFORMER" },
+    { english: "EMPOWER", french: "RENFORCER" },
+    { english: "ADVANCE", french: "FAIRE PROGRESSER" },
+    { english: "SECURE", french: "SÉCURISER" },
+    { english: "PROTECT", french: "PROTÉGER" },
+    { english: "STRENGTHEN", french: "CONSOLIDER" },
+    { english: "UNITE", french: "UNIR" },
+    { english: "REFORM", french: "RÉFORMER" },
+    { english: "RESTORE", french: "RESTAURER" },
+    { english: "REVITALIZE", french: "REVITALISER" },
+    { english: "DEFEND", french: "DÉFENDRE" }
 ];
 
+// Array of nouns with their phrases (including appropriate articles)
 const nouns = [
-    "FUTURE", "AMERICA", "COMMUNITY", "LIBERTY", "PROSPERITY",
-    "JUSTICE", "FREEDOM", "INNOVATION", "OPPORTUNITY", "DEMOCRACY",
-    "SECURITY", "PROGRESS", "CHANGE", "EQUALITY", "EXCELLENCE"
+    { english: "THE FUTURE", french: "L'AVENIR" },
+    { english: "AMERICA", french: "L'AMÉRIQUE" },
+    { english: "OUR COMMUNITY", french: "LA COMMUNAUTÉ" },
+    { english: "LIBERTY", french: "LA LIBERTÉ" },
+    { english: "PROSPERITY", french: "LA PROSPÉRITÉ" },
+    { english: "JUSTICE", french: "LA JUSTICE" },
+    { english: "FREEDOM", french: "LA LIBERTÉ" },
+    { english: "INNOVATION", french: "L'INNOVATION" },
+    { english: "OPPORTUNITY", french: "L'OPPORTUNITÉ" },
+    { english: "DEMOCRACY", french: "LA DÉMOCRATIE" },
+    { english: "SECURITY", french: "LA SÉCURITÉ" },
+    { english: "PROGRESS", french: "LE PROGRÈS" },
+    { english: "CHANGE", french: "LE CHANGEMENT" },
+    { english: "EQUALITY", french: "L'ÉGALITÉ" },
+    { english: "EXCELLENCE", french: "L'EXCELLENCE" }
 ];
-
-// French translations with gender information (m = masculine, f = feminine)
-const frenchVerbs = {
-    "INSPIRE": "INSPIRER",
-    "BUILD": "CONSTRUIRE",
-    "LEAD": "DIRIGER",
-    "CHAMPION": "DÉFENDRE",
-    "TRANSFORM": "TRANSFORMER",
-    "EMPOWER": "RENFORCER",
-    "ADVANCE": "FAIRE PROGRESSER",
-    "SECURE": "SÉCURISER",
-    "PROTECT": "PROTÉGER",
-    "STRENGTHEN": "CONSOLIDER",
-    "UNITE": "UNIR",
-    "REFORM": "RÉFORMER",
-    "RESTORE": "RESTAURER",
-    "REVITALIZE": "REVITALISER",
-    "DEFEND": "DÉFENDRE"
-};
-
-const frenchNouns = {
-    "FUTURE": { word: "AVENIR", gender: "m" },
-    "AMERICA": { word: "AMÉRIQUE", gender: "f" },
-    "COMMUNITY": { word: "COMMUNAUTÉ", gender: "f" },
-    "LIBERTY": { word: "LIBERTÉ", gender: "f" },
-    "PROSPERITY": { word: "PROSPÉRITÉ", gender: "f" },
-    "JUSTICE": { word: "JUSTICE", gender: "f" },
-    "FREEDOM": { word: "LIBERTÉ", gender: "f" },
-    "INNOVATION": { word: "INNOVATION", gender: "f" },
-    "OPPORTUNITY": { word: "OPPORTUNITÉ", gender: "f" },
-    "DEMOCRACY": { word: "DÉMOCRATIE", gender: "f" },
-    "SECURITY": { word: "SÉCURITÉ", gender: "f" },
-    "PROGRESS": { word: "PROGRÈS", gender: "m" },
-    "CHANGE": { word: "CHANGEMENT", gender: "m" },
-    "EQUALITY": { word: "ÉGALITÉ", gender: "f" },
-    "EXCELLENCE": { word: "EXCELLENCE", gender: "f" }
-};
 
 // Function to generate a random slogan in both languages
 function generateSlogan() {
     const randomVerbIndex = Math.floor(Math.random() * verbs.length);
     const randomNounIndex = Math.floor(Math.random() * nouns.length);
     
-    const englishVerb = verbs[randomVerbIndex];
-    const englishNoun = nouns[randomNounIndex];
+    const verb = verbs[randomVerbIndex];
+    const noun = nouns[randomNounIndex];
     
-    // Generate the English slogan
-    const englishSlogan = `${englishVerb} THE ${englishNoun}`;
-    
-    // Generate the French slogan with proper article based on gender
-    const frenchVerb = frenchVerbs[englishVerb];
-    const frenchNoun = frenchNouns[englishNoun];
-    
-    let article;
-    if (frenchNoun.gender === "m") {
-        // Check if the noun starts with a vowel
-        if (/^[AEIOUÉ]/.test(frenchNoun.word)) {
-            article = "L'";
-        } else {
-            article = "LE ";
-        }
-    } else {
-        // Check if the noun starts with a vowel
-        if (/^[AEIOUÉ]/.test(frenchNoun.word)) {
-            article = "L'";
-        } else {
-            article = "LA ";
-        }
-    }
-    
-    const frenchSlogan = `${frenchVerb} ${article}${frenchNoun.word}`;
+    // Generate slogans by simple concatenation
+    const englishSlogan = `${verb.english} ${noun.english}`;
+    const frenchSlogan = `${verb.french} ${noun.french}`;
     
     return {
         english: englishSlogan,
