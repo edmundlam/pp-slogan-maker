@@ -1,1 +1,2 @@
-# pp-slogan-maker
+# PP Slogan Maker
+

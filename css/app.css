@@ -47,14 +47,18 @@
   /* Styling for the slogan container */
   .slogan-container {
     position: absolute;
-    /* These positioning values will need to be adjusted based on your actual podium image */
-    bottom: 20%; /* Adjust this to position the slogan on the podium */
+    /* Position relative to the podium in the image */
+    bottom: 3%; /* Position in bottom quarter of image */
     left: 50%;
     transform: translateX(-50%);
     
-    width: 80%;
+    width: 80%; /* Will be adjusted by JS */
     max-width: 500px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   
   /* Common styling for both slogans */
@@ -63,20 +67,25 @@
     font-weight: bold;
     color: white;
     text-align: center;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Adds shadow to make text readable */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
     width: 100%;
+    line-height: 1.2;
+    word-wrap: break-word;
+    transition: font-size 0.3s ease;
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
   
   /* English slogan styling */
   #english-slogan {
     font-size: 2.5rem;
-    margin-bottom: 5px;
+    margin-bottom: 12px; /* Increased from 5px */
   }
   
   /* French slogan styling */
   #french-slogan {
     font-size: 2rem;
-    margin-top: 5px;
+    margin-top: 12px; /* Increased from 5px */
   }
   
   /* Button styling */
@@ -116,6 +125,20 @@
     color: var(--footer-text);
   }
   
+  footer a {
+    color: #3a86ff;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+  
+  footer a:hover {
+    color: #4361ee;
+    text-decoration: underline;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
   /* Responsive adjustments */
   @media (max-width: 768px) {
     #english-slogan {
@@ -127,7 +150,7 @@
     }
     
     .slogan-container {
-      bottom: 25%; /* Adjust for mobile */
+      bottom: 3%; /* Adjust for mobile */
     }
     
     .podium-image {
