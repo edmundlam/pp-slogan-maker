@@ -1,0 +1,137 @@
+/* Base styles and dark mode theme */
+:root {
+    --primary-bg: #121212;
+    --button-bg: #3a86ff;
+    --button-hover: #4361ee;
+    --button-text: white;
+    --footer-text: #a0a0a0;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: var(--primary-bg);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  /* Podium image and slogan positioning */
+  .podium-wrapper {
+    position: relative;
+    max-width: 100%;
+    margin-bottom: 30px;
+  }
+  
+  .podium-image {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+  }
+  
+  /* Styling for the slogan container */
+  .slogan-container {
+    position: absolute;
+    /* These positioning values will need to be adjusted based on your actual podium image */
+    bottom: 20%; /* Adjust this to position the slogan on the podium */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+  }
+  
+  /* Common styling for both slogans */
+  .slogan {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Adds shadow to make text readable */
+    width: 100%;
+  }
+  
+  /* English slogan styling */
+  #english-slogan {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+  }
+  
+  /* French slogan styling */
+  #french-slogan {
+    font-size: 2rem;
+    margin-top: 5px;
+  }
+  
+  /* Button styling */
+  .button-container {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  #generateButton {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 30px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  #generateButton:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  #generateButton:active {
+    transform: translateY(0);
+  }
+  
+  /* Footer styling */
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+    color: var(--footer-text);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #english-slogan {
+      font-size: 1.8rem;
+    }
+    
+    #french-slogan {
+      font-size: 1.5rem;
+    }
+    
+    .slogan-container {
+      bottom: 25%; /* Adjust for mobile */
+    }
+    
+    .podium-image {
+      /* This crop effect centers on the podium area for mobile */
+      object-position: center;
+    }
+  }
