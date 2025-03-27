@@ -263,7 +263,140 @@ function updateSlogan() {
 }
 
 // Function to download the shareable image
+
 function downloadShareableImage() {
+    const img = document.querySelector('#podium-container img');
+    
+    if (!img || !img.dataset.svgContent) {
+        console.error("No image or SVG content found");
+        return;
+    }
+    
+    // Load the original background image directly
+    const originalImageBase = "images/pp3.webp";
+    const originalImg = new Image();
+    
+    originalImg.onload = function() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set dimensions
+        canvas.width = originalImg.naturalWidth;
+        canvas.height = originalImg.naturalHeight;
+        
+        // Draw background image
+        ctx.drawImage(originalImg, 0, 0);
+        
+        // Parse the SVG content to extract text information
+        const parser = new DOMParser();
+        const svgDoc = parser.parseFromString(img.dataset.svgContent, "image/svg+xml");
+        const texts = svgDoc.querySelectorAll('text');
+        
+        // Extract the English and French text content
+        let englishText = "";
+        let frenchText = "";
+        let englishY = 0;
+        let frenchY = 0;
+        let englishSize = 0;
+        let frenchSize = 0;
+        
+        texts.forEach((text, index) => {
+            const content = text.textContent.trim();
+            const y = parseFloat(text.getAttribute('y'));
+            const fontSize = parseFloat(text.getAttribute('font-size'));
+            
+            if (index === 0) {  // First text element (English)
+                englishText = content;
+                englishY = y;
+                englishSize = fontSize;
+            } else {  // Second text element (French)
+                frenchText = content;
+                frenchY = y;
+                frenchSize = fontSize;
+            }
+        });
+        
+        // Set up text styling
+        ctx.fillStyle = 'white';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Apply text shadow
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        
+        // Draw English text
+        ctx.font = `bold ${englishSize}px Arial, sans-serif`;
+        ctx.fillText(englishText, canvas.width / 2, englishY);
+        
+        // Draw French text
+        ctx.font = `bold ${frenchSize}px Arial, sans-serif`;
+        ctx.fillText(frenchText, canvas.width / 2, frenchY);
+        
+        // Convert to WebP and trigger download
+        try {
+            // Convert canvas to WebP data URL (with quality parameter - 0.9 = 90% quality)
+            const webpUrl = canvas.toDataURL('image/webp', 0.9);
+            
+            // Create download link
+            const downloadLink = document.createElement('a');
+            downloadLink.href = webpUrl;
+            downloadLink.download = 'campaign-slogan.webp';
+            
+            // Trigger download
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        } catch (e) {
+            console.error("Error creating WebP:", e);
+            // Try PNG as a fallback
+            try {
+                const pngUrl = canvas.toDataURL('image/png');
+                const downloadLink = document.createElement('a');
+                downloadLink.href = pngUrl;
+                downloadLink.download = 'campaign-slogan.png';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            } catch (pngError) {
+                console.error("Error creating PNG:", pngError);
+                alert("Error creating image. Falling back to SVG.");
+                // Fall back to SVG download
+                downloadAsSVG(img.dataset.svgContent);
+            }
+        }
+    };
+    
+    originalImg.onerror = function() {
+        console.error("Failed to load original image");
+        alert("Failed to load background image. Falling back to SVG.");
+        // Fall back to SVG download
+        downloadAsSVG(img.dataset.svgContent);
+    };
+    
+    // Load the original image
+    originalImg.src = originalImageBase;
+}
+
+// Helper function to download as SVG (fallback)
+function downloadAsSVG(svgContent) {
+    const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
+    const url = URL.createObjectURL(svgBlob);
+    
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = 'campaign-slogan.svg';
+    
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    
+    URL.revokeObjectURL(url);
+}
+
+function downloadShareableImage2() {
     const img = document.querySelector('#podium-container img');
     
     if (!img || !img.dataset.svgContent) {
