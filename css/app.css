@@ -147,3 +147,22 @@
       object-position: center;
     }
   }
+
+  /* Title styling */
+  #slogan-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1px;
+  }
+
+  /* Make title responsive */
+  @media (max-width: 768px) {
+    #slogan-title {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+  }
