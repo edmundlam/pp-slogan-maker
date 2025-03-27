@@ -264,11 +264,10 @@ function updateSlogan() {
 
 // Function to download the shareable image
 
-function downloadShareableImage() {
-    const img = document.querySelector('#podium-container img');
-    
-    if (!img || !img.dataset.svgContent) {
-        console.error("No image or SVG content found");
+// Common helper function for processing image
+function processImage(svgContent, callback) {
+    if (!svgContent) {
+        console.error("No SVG content found");
         return;
     }
     
@@ -289,7 +288,7 @@ function downloadShareableImage() {
         
         // Parse the SVG content to extract text information
         const parser = new DOMParser();
-        const svgDoc = parser.parseFromString(img.dataset.svgContent, "image/svg+xml");
+        const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
         const texts = svgDoc.querySelectorAll('text');
         
         // Extract the English and French text content
@@ -301,6 +300,7 @@ function downloadShareableImage() {
         let frenchSize = 0;
         
         texts.forEach((text, index) => {
+            // ...extract text content and attributes...
             const content = text.textContent.trim();
             const y = parseFloat(text.getAttribute('y'));
             const fontSize = parseFloat(text.getAttribute('font-size'));
@@ -335,9 +335,38 @@ function downloadShareableImage() {
         ctx.font = `bold ${frenchSize}px Arial, sans-serif`;
         ctx.fillText(frenchText, canvas.width / 2, frenchY);
         
-        // Convert to WebP and trigger download
+        // Execute callback with canvas and SVG content
+        callback(canvas, svgContent);
+    };
+    
+    originalImg.onerror = function() {
+        console.error("Failed to load original image");
+        // Call callback with failure parameters
+        callback(null, svgContent, true);
+    };
+    
+    // Load the original image
+    originalImg.src = originalImageBase;
+}
+
+// Function to download the shareable image
+function downloadShareableImage() {
+    const img = document.querySelector('#podium-container img');
+    
+    if (!img || !img.dataset.svgContent) {
+        console.error("No image or SVG content found");
+        return;
+    }
+    
+    processImage(img.dataset.svgContent, (canvas, svgContent, failed) => {
+        if (failed) {
+            alert("Failed to load background image. Falling back to SVG.");
+            downloadAsSVG(svgContent);
+            return;
+        }
+        
         try {
-            // Convert canvas to WebP data URL (with quality parameter - 0.9 = 90% quality)
+            // Convert canvas to WebP data URL
             const webpUrl = canvas.toDataURL('image/webp', 0.9);
             
             // Create download link
@@ -364,20 +393,50 @@ function downloadShareableImage() {
                 console.error("Error creating PNG:", pngError);
                 alert("Error creating image. Falling back to SVG.");
                 // Fall back to SVG download
-                downloadAsSVG(img.dataset.svgContent);
+                downloadAsSVG(svgContent);
             }
         }
-    };
+    });
+}
+
+function shareInNewTab() {
+    const img = document.querySelector('#podium-container img');
     
-    originalImg.onerror = function() {
-        console.error("Failed to load original image");
-        alert("Failed to load background image. Falling back to SVG.");
-        // Fall back to SVG download
-        downloadAsSVG(img.dataset.svgContent);
-    };
+    if (!img || !img.dataset.svgContent) {
+        console.error("No image or SVG content found");
+        return;
+    }
     
-    // Load the original image
-    originalImg.src = originalImageBase;
+    processImage(img.dataset.svgContent, (canvas, svgContent, failed) => {
+        if (failed) {
+            // Fall back to SVG
+            const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(svgBlob);
+            window.open(url, '_blank');
+            return;
+        }
+        
+        try {
+            // Convert canvas to WebP data URL
+            const webpUrl = canvas.toDataURL('image/webp', 0.9);
+            
+            // Open in a new tab
+            window.open(webpUrl, '_blank');
+        } catch (e) {
+            console.error("Error creating WebP:", e);
+            // Try PNG as a fallback
+            try {
+                const pngUrl = canvas.toDataURL('image/png');
+                window.open(pngUrl, '_blank');
+            } catch (pngError) {
+                console.error("Error creating PNG:", pngError);
+                // Fall back to SVG
+                const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
+                const url = URL.createObjectURL(svgBlob);
+                window.open(url, '_blank');
+            }
+        }
+    });
 }
 
 // Helper function to download as SVG (fallback)
@@ -396,31 +455,8 @@ function downloadAsSVG(svgContent) {
     URL.revokeObjectURL(url);
 }
 
-function downloadShareableImage2() {
-    const img = document.querySelector('#podium-container img');
-    
-    if (!img || !img.dataset.svgContent) {
-        console.error("No image or SVG content found");
-        return;
-    }
-    
-    // Create a blob from the stored SVG content
-    const svgBlob = new Blob([img.dataset.svgContent], {type: 'image/svg+xml'});
-    const url = URL.createObjectURL(svgBlob);
-    
-    // Create download link
-    const downloadLink = document.createElement('a');
-    downloadLink.href = url;
-    downloadLink.download = 'campaign-slogan.svg';
-    
-    // Trigger download
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-    
-    // Clean up
-    URL.revokeObjectURL(url);
-}
+
+
 
 // Add animation styles
 function addAnimationStyles() {
@@ -465,7 +501,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Set up button handlers
     document.getElementById('generateButton').addEventListener('click', updateSlogan);
-    document.getElementById('shareButton').addEventListener('click', downloadShareableImage);
+    // document.getElementById('shareButton').addEventListener('click', downloadShareableImage);
+    document.getElementById('shareButton').addEventListener('click', shareInNewTab);
     
     // Add spacebar handler
     document.addEventListener('keydown', function(event) {
