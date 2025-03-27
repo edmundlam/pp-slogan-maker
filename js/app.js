@@ -130,161 +130,215 @@ function generateSlogan() {
     };
 }
 
-function generateSlogan2() {
-    // Test with varying lengths
-    const slogans = [
-        { english: "SHORT", french: "COURT" },
-        { english: "INSPIRE THE FUTURE", french: "INSPIRER L'AVENIR" },
-        { english: "TRANSFORMING OUR COMMUNITY TOGETHER", french: "TRANSFORMER NOTRE COMMUNAUTÉ ENSEMBLE" },
-        { english: "INSPIREINSPIREINSPIREINSPIRE THE FUTURE OF DEMOCRACY", french: "INSPIRERINSPIRERINSPIRER L'AVENIR DE LA DÉMOCRATIE" }
-    ];
-    
-    // Cycle through test cases
-    const index = Math.floor(Math.random() * slogans.length);
-    return slogans[index];
+
+function createSharingImage(englishText, frenchText) {
+    return new Promise((resolve) => {
+        const placeholderImage = "images/pp3.webp";
+        const img = new Image();
+        
+        img.onload = function() {
+            const imageWidth = img.naturalWidth;
+            const imageHeight = img.naturalHeight;
+            
+            // Convert image to data URL
+            const canvas = document.createElement('canvas');
+            canvas.width = imageWidth;
+            canvas.height = imageHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            
+            // Get data URL (this will embed the image directly in the SVG)
+            const imageDataUrl = canvas.toDataURL('image/webp');
+            
+            // Position text near the bottom of the image
+            const textY = Math.round(imageHeight * 0.87);
+            
+            // Calculate font sizes - adaptive to text length
+            const englishLength = englishText.length;
+            const frenchLength = frenchText.length;
+            
+            // Base font size that scales with image width
+            const baseFontSize = imageWidth * 0.029;
+            
+            // Adjust based on text length - longer text gets smaller font
+            const englishSize = Math.min(
+                Math.max(baseFontSize * (25 / Math.max(englishLength, 10)), 14), // Changed 30 to 25 and 16 to 14
+                50 // Reduced max font size from 60 to 50
+            );
+            const frenchSize = Math.min(
+                Math.max(baseFontSize * (25 / Math.max(frenchLength, 10)), 12), // Changed 30 to 25 and 14 to 12
+                40 // Reduced max font size from 48 to 40
+            );
+            
+            // Create the SVG with embedded image data URL
+            const svgContent = `
+            <svg xmlns="http://www.w3.org/2000/svg" 
+                width="100%" 
+                height="auto" 
+                viewBox="0 0 ${imageWidth} ${imageHeight}"
+                preserveAspectRatio="xMidYMid meet">
+                <defs>
+                    <style>
+                        .slogan-text {
+                            font-family: Arial, sans-serif;
+                            font-weight: bold;
+                            fill: white;
+                            text-anchor: middle;
+                            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+                        }
+                    </style>
+                </defs>
+                
+                <!-- Background image with embedded data URL -->
+                <image href="${imageDataUrl}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
+                
+                <!-- English slogan -->
+                <text class="slogan-text" x="${imageWidth/2}" y="${textY - 30}" font-size="${englishSize}">
+                    ${englishText}
+                </text>
+                
+                <!-- French slogan -->
+                <text class="slogan-text" x="${imageWidth/2}" y="${textY + 30}" font-size="${frenchSize}">
+                    ${frenchText}
+                </text>
+            </svg>`;
+            
+            // Create blob from final SVG content
+            const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(svgBlob);
+            
+            resolve({
+                url: url,
+                svgContent: svgContent
+            });
+        };
+        
+        img.onerror = function() {
+            console.error("Failed to load image:", placeholderImage);
+            // Handle error case
+        };
+        
+        // Set the src to trigger loading of the image
+        img.src = placeholderImage;
+    });
 }
 
-// Function to adjust font sizes based on content length
-function adjustFontSizes() {
-    const sloganContainer = document.getElementById('slogan-container');
-    const podiumImage = document.querySelector('.podium-image');
-    const englishSlogan = document.getElementById('english-slogan');
-    const frenchSlogan = document.getElementById('french-slogan');
-    
-    // Get the image dimensions
-    const imageWidth = podiumImage.clientWidth;
-    
-    // Calculate desired slogan width (approximately 60% of image width)
-    const targetWidth = Math.floor(imageWidth * 0.6);
-    
-    // Store current content for restoration
-    const englishContent = englishSlogan.textContent;
-    const frenchContent = frenchSlogan.textContent;
-    
-    // Reset font sizes completely to base CSS values
-    englishSlogan.style.fontSize = '';
-    frenchSlogan.style.fontSize = '';
-    
-    // Get default sizes from CSS
-    const defaultEnglishSize = parseFloat(window.getComputedStyle(englishSlogan).fontSize);
-    const defaultFrenchSize = parseFloat(window.getComputedStyle(frenchSlogan).fontSize);
-    
-    // Create temporary measurement elements with the original content
-    // This helps us measure the natural width without existing size constraints
-    const tempEnglish = document.createElement('div');
-    const tempFrench = document.createElement('div');
-    
-    // Copy the styling but ensure they're not visible
-    tempEnglish.style.cssText = `
-        position: absolute; 
-        visibility: hidden; 
-        height: auto; 
-        width: auto;
-        white-space: nowrap;
-        font-family: ${window.getComputedStyle(englishSlogan).fontFamily};
-        font-size: ${defaultEnglishSize}px;
-        font-weight: ${window.getComputedStyle(englishSlogan).fontWeight};
-    `;
-    tempFrench.style.cssText = `
-        position: absolute; 
-        visibility: hidden; 
-        height: auto; 
-        width: auto;
-        white-space: nowrap;
-        font-family: ${window.getComputedStyle(frenchSlogan).fontFamily};
-        font-size: ${defaultFrenchSize}px;
-        font-weight: ${window.getComputedStyle(frenchSlogan).fontWeight};
-    `;
-    
-    // Set the content
-    tempEnglish.textContent = englishContent;
-    tempFrench.textContent = frenchContent;
-    
-    // Add to document for measurement
-    document.body.appendChild(tempEnglish);
-    document.body.appendChild(tempFrench);
-    
-    // Get the natural width of text at default size
-    const englishWidth = tempEnglish.offsetWidth;
-    const frenchWidth = tempFrench.offsetWidth;
-    
-    // Remove the temporary elements
-    document.body.removeChild(tempEnglish);
-    document.body.removeChild(tempFrench);
-    
-    // Set minimum and maximum font sizes
-    const minEnglishSize = 16;
-    const minFrenchSize = 14;
-    const maxEnglishSize = 60;
-    const maxFrenchSize = 48;
-    
-    // Scale English slogan to fit target width
-    let englishScaleFactor = targetWidth / englishWidth;
-    englishScaleFactor = Math.min(englishScaleFactor, 2.5);
-    const newEnglishSize = Math.max(
-        Math.min(defaultEnglishSize * englishScaleFactor, maxEnglishSize),
-        minEnglishSize
-    );
-    englishSlogan.style.fontSize = `${newEnglishSize}px`;
-    
-    // Scale French slogan accordingly
-    let frenchScaleFactor = targetWidth / frenchWidth;
-    frenchScaleFactor = Math.min(frenchScaleFactor, 2.5);
-    const newFrenchSize = Math.max(
-        Math.min(defaultFrenchSize * frenchScaleFactor, maxFrenchSize),
-        minFrenchSize
-    );
-    frenchSlogan.style.fontSize = `${newFrenchSize}px`;
-}
 
 // Function to update the slogan on the page
 function updateSlogan() {
+    // Generate new slogan text
     const slogans = generateSlogan();
-    const englishSloganElement = document.getElementById('english-slogan');
-    const frenchSloganElement = document.getElementById('french-slogan');
     
-    englishSloganElement.textContent = slogans.english;
-    frenchSloganElement.textContent = slogans.french;
+    // Get the container
+    const container = document.getElementById('podium-container');
     
-    // Adjust font sizes to fit slogan container
-    adjustFontSizes();
+    // Show loading state
+    container.innerHTML = '<div class="loading">Generating slogan...</div>';
     
-    // Add a subtle animation effect to both slogans
-    const sloganContainer = document.getElementById('slogan-container');
-    sloganContainer.style.animation = 'none';
-    sloganContainer.offsetHeight; // Trigger reflow
-    sloganContainer.style.animation = 'fadeIn 0.5s ease-in-out';
+    // Generate the shareable image with the slogan
+    createSharingImage(slogans.english, slogans.french)
+        .then(result => {
+            // Create an image with the SVG data URI
+            const img = document.createElement('img');
+            img.src = result.url;
+            img.alt = `Campaign slogan: ${slogans.english} / ${slogans.french}`;
+            img.className = 'fade-in';
+            
+            // Store SVG content for sharing
+            img.dataset.svgContent = result.svgContent;
+            
+            // Clear container and add the new image
+            container.innerHTML = '';
+            container.appendChild(img);
+        })
+        .catch(error => {
+            console.error("Error creating slogan image:", error);
+            container.innerHTML = `
+                <div class="error-message">
+                    <p>Error generating image</p>
+                    <p>English: ${slogans.english}</p>
+                    <p>French: ${slogans.french}</p>
+                </div>`;
+        });
 }
 
-// Add keypress functionality to generate new slogans with spacebar
-document.addEventListener('keydown', function(event) {
-    // Check if the spacebar was pressed (key code 32)
-    if (event.keyCode === 32 || event.code === 'Space') {
-        updateSlogan();
-        // Prevent default space behavior (like scrolling)
-        event.preventDefault();
+// Function to download the shareable image
+function downloadShareableImage() {
+    const img = document.querySelector('#podium-container img');
+    
+    if (!img || !img.dataset.svgContent) {
+        console.error("No image or SVG content found");
+        return;
     }
-});
-
-// Optional: Define the animation in JS for browsers that don't support it in CSS
-if (!document.querySelector('style#slogan-animations')) {
-    const style = document.createElement('style');
-    style.id = 'slogan-animations';
-    style.textContent = `
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    `;
-    document.head.appendChild(style);
+    
+    // Create a blob from the stored SVG content
+    const svgBlob = new Blob([img.dataset.svgContent], {type: 'image/svg+xml'});
+    const url = URL.createObjectURL(svgBlob);
+    
+    // Create download link
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = 'campaign-slogan.svg';
+    
+    // Trigger download
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    
+    // Clean up
+    URL.revokeObjectURL(url);
 }
 
-// Event listener for the generate button
-document.getElementById('generateButton').addEventListener('click', updateSlogan);
+// Add animation styles
+function addAnimationStyles() {
+    if (!document.querySelector('style#slogan-animations')) {
+        const style = document.createElement('style');
+        style.id = 'slogan-animations';
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .fade-in {
+                animation: fadeIn 0.5s ease-in-out;
+            }
+            .loading {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                padding: 20px;
+                color: #333;
+            }
+            .error-message {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                padding: 20px;
+                color: #721c24;
+                background-color: #f8d7da;
+                border: 1px solid #f5c6cb;
+                border-radius: 4px;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
 
-// Generate a slogan when the page loads
+// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
+    // Add animation styles
+    addAnimationStyles();
+    
+    // Generate initial slogan
     updateSlogan();
-    // Also adjust on window resize
-    window.addEventListener('resize', adjustFontSizes);
+    
+    // Set up button handlers
+    document.getElementById('generateButton').addEventListener('click', updateSlogan);
+    document.getElementById('shareButton').addEventListener('click', downloadShareableImage);
+    
+    // Add spacebar handler
+    document.addEventListener('keydown', function(event) {
+        if (event.code === 'Space') {
+            updateSlogan();
+            event.preventDefault();
+        }
+    });
 });
