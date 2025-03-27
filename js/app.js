@@ -409,7 +409,7 @@ function shareInNewTab() {
     
     processImage(img.dataset.svgContent, (canvas, svgContent, failed) => {
         if (failed) {
-            // Fall back to SVG
+            // Fall back to SVG using Blob URL (already using this approach)
             const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
             const url = URL.createObjectURL(svgBlob);
             window.open(url, '_blank');
@@ -417,23 +417,31 @@ function shareInNewTab() {
         }
         
         try {
-            // Convert canvas to WebP data URL
-            const webpUrl = canvas.toDataURL('image/webp', 0.9);
-            
-            // Open in a new tab
-            window.open(webpUrl, '_blank');
+            // Convert canvas to a Blob instead of data URL
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                window.open(url, '_blank');
+                
+                // Clean up the URL object when done (can be called after window.open)
+                // But need to delay to ensure the browser has time to load the image
+                setTimeout(() => URL.revokeObjectURL(url), 60000);
+            }, 'image/webp', 0.9);
         } catch (e) {
-            console.error("Error creating WebP:", e);
+            console.error("Error creating WebP blob:", e);
             // Try PNG as a fallback
             try {
-                const pngUrl = canvas.toDataURL('image/png');
-                window.open(pngUrl, '_blank');
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                    setTimeout(() => URL.revokeObjectURL(url), 60000);
+                }, 'image/png');
             } catch (pngError) {
-                console.error("Error creating PNG:", pngError);
+                console.error("Error creating PNG blob:", pngError);
                 // Fall back to SVG
                 const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
                 const url = URL.createObjectURL(svgBlob);
                 window.open(url, '_blank');
+                setTimeout(() => URL.revokeObjectURL(url), 60000);
             }
         }
     });
