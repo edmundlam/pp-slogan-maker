@@ -1,3 +1,6 @@
+const BACKGROUND_IMAGE = "images/pp3.webp";
+const IMAGE_QUALITY = 0.9; // For WebP/PNG exports
+
 // Array of verbs for slogan generation with translations
 const verbs = [
     { english: "AXE", french: "SUPPRIMER" },
@@ -58,7 +61,6 @@ const nouns = [
     { english: "MY LEADERSHIP", french: "MON LEADERSHIP" },
     { english: "MY SECURITY CLEARANCE", french: "HABILITATION DE SÉCURITÉ" },
     { english: "THE WASTE", french: "LE GASPILLAGE" },
-    { english: "THE RED TAPE", french: "LES FORMALITÉS ADMINISTRATIVES" },
     { english: "THE SYSTEM", french: "LE SYSTÈME" },
     { english: "THE ECONOMY", french: "L'ÉCONOMIE" },
     { english: "THE ESTABLISHMENT", french: "L'ESTABLISHMENT" },
@@ -73,8 +75,6 @@ const nouns = [
     { english: "THE BLOC MAJORITY", french: "LE BLOC MAJORITAIRE" },
     { english: "THE DEMOCRACY", french: "LA DÉMOCRATIE" },
     { english: "THE REGULATIONS", french: "LES RÈGLEMENTS" },
-    // { english: "THE PROSPERITY", french: "LA PROSPÉRITÉ" },
-    // { english: "THE OPPORTUNITY", french: "L'OPPORTUNITÉ" },
     { english: "THE DEEP STATE", french: "L'ÉTAT PROFOND" },
     { english: "THE POLITICAL CORRECTNESS", french: "LE POLITIQUEMENT CORRECT" },
     { english: "THE WORKING CLASS", french: "LA CLASSE OUVRIÈRE" },
@@ -140,7 +140,6 @@ function generateSlogan() {
 
 function createSharingImage(englishText, frenchText) {
     return new Promise((resolve) => {
-        const placeholderImage = "images/pp3.webp";
         const img = new Image();
         
         img.onload = function() {
@@ -154,63 +153,15 @@ function createSharingImage(englishText, frenchText) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0);
             
-            // Get data URL (this will embed the image directly in the SVG)
             const imageDataUrl = canvas.toDataURL('image/webp');
             
-            // Position text near the bottom of the image
-            const textY = Math.round(imageHeight * 0.87);
+            // Calculate font sizes and positions
+            const textSettings = calculateTextSettings(englishText, frenchText, imageWidth, imageHeight);
             
-            // Calculate font sizes - adaptive to text length
-            const englishLength = englishText.length;
-            const frenchLength = frenchText.length;
+            // Create the SVG with these settings
+            const svgContent = createSVGContent(imageDataUrl, textSettings, imageWidth, imageHeight, englishText, frenchText);
             
-            // Base font size that scales with image width
-            const baseFontSize = imageWidth * 0.029;
-            
-            // Adjust based on text length - longer text gets smaller font
-            const englishSize = Math.min(
-                Math.max(baseFontSize * (25 / Math.max(englishLength, 10)), 14), // Changed 30 to 25 and 16 to 14
-                50 // Reduced max font size from 60 to 50
-            );
-            const frenchSize = Math.min(
-                Math.max(baseFontSize * (25 / Math.max(frenchLength, 10)), 12), // Changed 30 to 25 and 14 to 12
-                40 // Reduced max font size from 48 to 40
-            );
-            
-            // Create the SVG with embedded image data URL
-            const svgContent = `
-            <svg xmlns="http://www.w3.org/2000/svg" 
-                width="100%" 
-                height="auto" 
-                viewBox="0 0 ${imageWidth} ${imageHeight}"
-                preserveAspectRatio="xMidYMid meet">
-                <defs>
-                    <style>
-                        .slogan-text {
-                            font-family: Arial, sans-serif;
-                            font-weight: bold;
-                            fill: white;
-                            text-anchor: middle;
-                            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-                        }
-                    </style>
-                </defs>
-                
-                <!-- Background image with embedded data URL -->
-                <image href="${imageDataUrl}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
-                
-                <!-- English slogan -->
-                <text class="slogan-text" x="${imageWidth/2}" y="${textY - 30}" font-size="${englishSize}">
-                    ${englishText}
-                </text>
-                
-                <!-- French slogan -->
-                <text class="slogan-text" x="${imageWidth/2}" y="${textY + 30}" font-size="${frenchSize}">
-                    ${frenchText}
-                </text>
-            </svg>`;
-            
-            // Create blob from final SVG content
+            // Create blob from SVG content
             const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
             const url = URL.createObjectURL(svgBlob);
             
@@ -221,13 +172,75 @@ function createSharingImage(englishText, frenchText) {
         };
         
         img.onerror = function() {
-            console.error("Failed to load image:", placeholderImage);
-            // Handle error case
+            console.error("Failed to load image:", BACKGROUND_IMAGE);
+            resolve({ error: true, message: "Failed to load background image" });
         };
         
-        // Set the src to trigger loading of the image
-        img.src = placeholderImage;
+        img.src = BACKGROUND_IMAGE;
     });
+}
+
+function calculateTextSettings(englishText, frenchText, imageWidth, imageHeight) {
+    // Position text near the bottom of the image
+    const textY = Math.round(imageHeight * 0.87);
+    
+    // Calculate font sizes based on text length
+    const englishLength = englishText.length;
+    const frenchLength = frenchText.length;
+    
+    // Base font size that scales with image width
+    const baseFontSize = imageWidth * 0.029;
+    
+    // Adjust based on text length - longer text gets smaller font
+    const englishSize = Math.min(
+        Math.max(baseFontSize * (25 / Math.max(englishLength, 10)), 14),
+        50
+    );
+    const frenchSize = Math.min(
+        Math.max(baseFontSize * (25 / Math.max(frenchLength, 10)), 12),
+        40
+    );
+    
+    return {
+        englishY: textY - 30,
+        frenchY: textY + 30,
+        englishSize,
+        frenchSize
+    };
+}
+
+function createSVGContent(imageDataUrl, textSettings, imageWidth, imageHeight, englishText, frenchText) {
+    return `
+    <svg xmlns="http://www.w3.org/2000/svg" 
+        width="100%" 
+        height="auto" 
+        viewBox="0 0 ${imageWidth} ${imageHeight}"
+        preserveAspectRatio="xMidYMid meet">
+        <defs>
+            <style>
+                .slogan-text {
+                    font-family: Arial, sans-serif;
+                    font-weight: bold;
+                    fill: white;
+                    text-anchor: middle;
+                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+                }
+            </style>
+        </defs>
+        
+        <!-- Background image with embedded data URL -->
+        <image href="${imageDataUrl}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
+        
+        <!-- English slogan -->
+        <text class="slogan-text" x="${imageWidth/2}" y="${textSettings.englishY}" font-size="${textSettings.englishSize}">
+            ${englishText}
+        </text>
+        
+        <!-- French slogan -->
+        <text class="slogan-text" x="${imageWidth/2}" y="${textSettings.frenchY}" font-size="${textSettings.frenchSize}">
+            ${frenchText}
+        </text>
+    </svg>`;
 }
 
 
@@ -269,17 +282,15 @@ function updateSlogan() {
         });
 }
 
-// Function to download the shareable image
-
-// Common helper function for processing image
+// Function to process the image and render text on it
 function processImage(svgContent, callback) {
     if (!svgContent) {
         console.error("No SVG content found");
+        callback(null, null, true);
         return;
     }
     
     // Load the original background image directly
-    const originalImageBase = "images/pp3.webp";
     const originalImg = new Image();
     
     originalImg.onload = function() {
@@ -293,54 +304,11 @@ function processImage(svgContent, callback) {
         // Draw background image
         ctx.drawImage(originalImg, 0, 0);
         
-        // Parse the SVG content to extract text information
-        const parser = new DOMParser();
-        const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
-        const texts = svgDoc.querySelectorAll('text');
+        // Extract text info from SVG
+        const textInfo = extractTextFromSVG(svgContent);
         
-        // Extract the English and French text content
-        let englishText = "";
-        let frenchText = "";
-        let englishY = 0;
-        let frenchY = 0;
-        let englishSize = 0;
-        let frenchSize = 0;
-        
-        texts.forEach((text, index) => {
-            // ...extract text content and attributes...
-            const content = text.textContent.trim();
-            const y = parseFloat(text.getAttribute('y'));
-            const fontSize = parseFloat(text.getAttribute('font-size'));
-            
-            if (index === 0) {  // First text element (English)
-                englishText = content;
-                englishY = y;
-                englishSize = fontSize;
-            } else {  // Second text element (French)
-                frenchText = content;
-                frenchY = y;
-                frenchSize = fontSize;
-            }
-        });
-        
-        // Set up text styling
-        ctx.fillStyle = 'white';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        
-        // Apply text shadow
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
-        
-        // Draw English text
-        ctx.font = `bold ${englishSize}px Arial, sans-serif`;
-        ctx.fillText(englishText, canvas.width / 2, englishY);
-        
-        // Draw French text
-        ctx.font = `bold ${frenchSize}px Arial, sans-serif`;
-        ctx.fillText(frenchText, canvas.width / 2, frenchY);
+        // Draw text on canvas
+        renderTextOnCanvas(ctx, canvas.width, textInfo);
         
         // Execute callback with canvas and SVG content
         callback(canvas, svgContent);
@@ -348,15 +316,124 @@ function processImage(svgContent, callback) {
     
     originalImg.onerror = function() {
         console.error("Failed to load original image");
-        // Call callback with failure parameters
         callback(null, svgContent, true);
     };
     
     // Load the original image
-    originalImg.src = originalImageBase;
+    originalImg.src = BACKGROUND_IMAGE;
 }
 
+function extractTextFromSVG(svgContent) {
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
+    const texts = svgDoc.querySelectorAll('text');
+    
+    let result = {
+        english: { text: "", y: 0, fontSize: 0 },
+        french: { text: "", y: 0, fontSize: 0 }
+    };
+    
+    texts.forEach((text, index) => {
+        const content = text.textContent.trim();
+        const y = parseFloat(text.getAttribute('y'));
+        const fontSize = parseFloat(text.getAttribute('font-size'));
+        
+        if (index === 0) {  // First text element (English)
+            result.english = { text: content, y: y, fontSize: fontSize };
+        } else {  // Second text element (French)
+            result.french = { text: content, y: y, fontSize: fontSize };
+        }
+    });
+    
+    return result;
+}
+
+function renderTextOnCanvas(ctx, canvasWidth, textInfo) {
+    // Set up text styling
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Apply text shadow
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 2;
+    
+    // Draw English text
+    ctx.font = `bold ${textInfo.english.fontSize}px Arial, sans-serif`;
+    ctx.fillText(textInfo.english.text, canvasWidth / 2, textInfo.english.y);
+    
+    // Draw French text
+    ctx.font = `bold ${textInfo.french.fontSize}px Arial, sans-serif`;
+    ctx.fillText(textInfo.french.text, canvasWidth / 2, textInfo.french.y);
+}
+
+
 // Function to download the shareable image
+function exportCanvas(canvas, svgContent, options) {
+    const { asDownload = false, filename = 'campaign-slogan' } = options || {};
+    
+    // Try WebP first
+    try {
+        exportCanvasAs(canvas, 'webp', `${filename}.webp`, asDownload);
+    } catch (e) {
+        console.error("Error creating WebP:", e);
+        
+        // Try PNG as a fallback
+        try {
+            exportCanvasAs(canvas, 'png', `${filename}.png`, asDownload);
+        } catch (pngError) {
+            console.error("Error creating PNG:", pngError);
+            
+            // Fall back to SVG
+            if (svgContent) {
+                exportSVG(svgContent, `${filename}.svg`, asDownload);
+            }
+        }
+    }
+}
+
+function exportCanvasAs(canvas, format, filename, asDownload) {
+    if (asDownload) {
+        // For download: create data URL and trigger download
+        const dataUrl = canvas.toDataURL(`image/${format}`, IMAGE_QUALITY);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = dataUrl;
+        downloadLink.download = filename;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    } else {
+        // For sharing: create blob and open in new tab
+        canvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            setTimeout(() => URL.revokeObjectURL(url), 60000);
+        }, `image/${format}`, IMAGE_QUALITY);
+    }
+}
+
+function exportSVG(svgContent, filename, asDownload) {
+    const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
+    const url = URL.createObjectURL(svgBlob);
+    
+    if (asDownload) {
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = filename;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(url);
+    } else {
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+    }
+}
+
+// Then update these functions:
+
 function downloadShareableImage() {
     const img = document.querySelector('#podium-container img');
     
@@ -368,41 +445,11 @@ function downloadShareableImage() {
     processImage(img.dataset.svgContent, (canvas, svgContent, failed) => {
         if (failed) {
             alert("Failed to load background image. Falling back to SVG.");
-            downloadAsSVG(svgContent);
+            exportSVG(svgContent, 'campaign-slogan.svg', true);
             return;
         }
         
-        try {
-            // Convert canvas to WebP data URL
-            const webpUrl = canvas.toDataURL('image/webp', 0.9);
-            
-            // Create download link
-            const downloadLink = document.createElement('a');
-            downloadLink.href = webpUrl;
-            downloadLink.download = 'campaign-slogan.webp';
-            
-            // Trigger download
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
-        } catch (e) {
-            console.error("Error creating WebP:", e);
-            // Try PNG as a fallback
-            try {
-                const pngUrl = canvas.toDataURL('image/png');
-                const downloadLink = document.createElement('a');
-                downloadLink.href = pngUrl;
-                downloadLink.download = 'campaign-slogan.png';
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-            } catch (pngError) {
-                console.error("Error creating PNG:", pngError);
-                alert("Error creating image. Falling back to SVG.");
-                // Fall back to SVG download
-                downloadAsSVG(svgContent);
-            }
-        }
+        exportCanvas(canvas, svgContent, { asDownload: true });
     });
 }
 
@@ -416,43 +463,14 @@ function shareInNewTab() {
     
     processImage(img.dataset.svgContent, (canvas, svgContent, failed) => {
         if (failed) {
-            // Fall back to SVG using Blob URL (already using this approach)
-            const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
-            const url = URL.createObjectURL(svgBlob);
-            window.open(url, '_blank');
+            exportSVG(svgContent, null, false);
             return;
         }
         
-        try {
-            // Convert canvas to a Blob instead of data URL
-            canvas.toBlob(blob => {
-                const url = URL.createObjectURL(blob);
-                window.open(url, '_blank');
-                
-                // Clean up the URL object when done (can be called after window.open)
-                // But need to delay to ensure the browser has time to load the image
-                setTimeout(() => URL.revokeObjectURL(url), 60000);
-            }, 'image/webp', 0.9);
-        } catch (e) {
-            console.error("Error creating WebP blob:", e);
-            // Try PNG as a fallback
-            try {
-                canvas.toBlob(blob => {
-                    const url = URL.createObjectURL(blob);
-                    window.open(url, '_blank');
-                    setTimeout(() => URL.revokeObjectURL(url), 60000);
-                }, 'image/png');
-            } catch (pngError) {
-                console.error("Error creating PNG blob:", pngError);
-                // Fall back to SVG
-                const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
-                const url = URL.createObjectURL(svgBlob);
-                window.open(url, '_blank');
-                setTimeout(() => URL.revokeObjectURL(url), 60000);
-            }
-        }
+        exportCanvas(canvas, svgContent, { asDownload: false });
     });
 }
+
 
 // Helper function to download as SVG (fallback)
 function downloadAsSVG(svgContent) {
@@ -469,8 +487,6 @@ function downloadAsSVG(svgContent) {
     
     URL.revokeObjectURL(url);
 }
-
-
 
 
 // Add animation styles
@@ -516,7 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Set up button handlers
     document.getElementById('generateButton').addEventListener('click', updateSlogan);
-    // document.getElementById('shareButton').addEventListener('click', downloadShareableImage);
+    document.getElementById('downloadButton').addEventListener('click', downloadShareableImage);
     document.getElementById('shareButton').addEventListener('click', shareInNewTab);
     
     // Add spacebar handler

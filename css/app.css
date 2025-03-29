@@ -63,14 +63,15 @@
   }
   
   /* Button styling */
+
   .button-container {
     margin-top: 20px;
     text-align: center;
   }
-  
+
   #generateButton {
-    background-color: var(--button-bg);
-    color: var(--button-text);
+    background-color: #e63946; /* Red */
+    color: white;
     border: none;
     border-radius: 30px;
     padding: 12px 24px;
@@ -80,21 +81,21 @@
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
-  
+
   #generateButton:hover {
-    background-color: var(--button-hover);
+    background-color: #d62828; /* Darker red */
     transform: translateY(-2px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
   }
-  
+
   #generateButton:active {
     transform: translateY(0);
   }
 
   /* Share button styling */
   #shareButton {
-    background-color: #4cc9f0;
-    color: var(--button-text);
+    background-color: #ffffff; /* White */
+    color: #121212; /* Dark text for contrast */
     border: none;
     border-radius: 30px;
     padding: 12px 24px;
@@ -107,7 +108,7 @@
   }
 
   #shareButton:hover {
-    background-color: #4895ef;
+    background-color: #f1faee; /* Off-white */
     transform: translateY(-2px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
   }
@@ -115,6 +116,32 @@
   #shareButton:active {
     transform: translateY(0);
   }
+
+  /* Download button styling */
+  #downloadButton {
+    background-color: #1d3557; /* Blue */
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-left: 10px;
+  }
+
+  #downloadButton:hover {
+    background-color: #0a2472; /* Darker blue */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  #downloadButton:active {
+    transform: translateY(0);
+  }
+
   
   /* Footer styling */
   footer {
@@ -145,6 +172,18 @@
     #podium-container svg {
       /* This crop effect centers on the podium area for mobile */
       object-position: center;
+    }
+    
+    /* Add spacing between stacked buttons on mobile */
+    #shareButton, #downloadButton {
+      margin-left: 0;
+      margin-top: 10px;
+    }
+    
+    /* Make the buttons full width on mobile for better touch targets */
+    #generateButton, #shareButton, #downloadButton {
+      width: 100%;
+      max-width: 300px;
     }
   }
 
