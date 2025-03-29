@@ -36,6 +36,14 @@ const verbs = [
 const nouns = [
     { en: "THE TAX", fr: "LES IMPÔTS" },
     { en: "THE BUDGET", fr: "LE BUDGET" },
+    { en: "MY MISERY", fr: "MA MISÈRE" },
+    { en: "MY AGONY", fr: "MA SOUFFRANCE" },
+    { en: "MY PAIN", fr: "MA DOULEUR" },
+    { en: "MY ANGUISH", fr: "MON ANGOISSE" },
+    { en: "MY DESPAIR", fr: "MON DÉSESPOIR" },
+    { en: "MY SUFFERING", fr: "MA SOUFFRANCE" },
+    { en: "MY ANXIETY", fr: "MON ANXIÉTÉ" },
+    { en: "MY STRESS", fr: "MON STRESS" },
     { en: "THE CRIME", fr: "LE CRIME" },
     { en: "THE JOBS", fr: "LES JOBS" },
     { en: "THE HOUSES", fr: "LES MAISONS" },
@@ -56,7 +64,10 @@ const nouns = [
     { en: "THE RED TAPE", fr: "LA BUREAUCRATIE" },
     { en: "THE GAS PRICES", fr: "LES PRIX DU CARBURANT" },
     { en: "THE DEFICIT", fr: "LE DÉFICIT" },
-    { en: "MY MISERY", fr: "MA MISÈRE" },
+    { en: "MY LEADERSHIP", fr: "MON LEADERSHIP" },
+    { en: "MY SEAT", fr: "MON SIÈGE" },
+    { en: "MY SECURITY CLEARANCE", fr: "HABILITATION DE SÉCURITÉ" },
+    { en: "MY PARTY", fr: "MON PARTI" },
     { en: "MY LEADERSHIP", fr: "MON LEADERSHIP" },
     { en: "MY SEAT", fr: "MON SIÈGE" },
     { en: "MY SECURITY CLEARANCE", fr: "HABILITATION DE SÉCURITÉ" },
@@ -101,6 +112,7 @@ const nouns = [
 ];
 
 let lastVerbIndex, lastNounIndex;
+let isFirstGeneration = true; 
 
 // Function to generate a random slogan in both languages
 function generateSlogan() {
@@ -108,20 +120,27 @@ function generateSlogan() {
     let iterations = 0;
     const MAX_ITERATIONS = 10; // Prevent infinite loop
     
-    // Keep generating until we get different indices or reach max iterations
-    do {
+    if (isFirstGeneration) {
         randomVerbIndex = Math.floor(Math.random() * verbs.length);
-        randomNounIndex = Math.floor(Math.random() * nouns.length);
-        iterations++;
+        randomNounIndex = nouns.findIndex(noun => noun.en === "MY MISERY");
+        if (randomNounIndex === -1) randomNounIndex = 2;
         
-        // If we've tried too many times, just accept what we have
-        if (iterations >= MAX_ITERATIONS) {
-            break;
-        }
-    // Change this line to prevent either component from repeating
-    } while (randomVerbIndex === lastVerbIndex || randomNounIndex === lastNounIndex);
+        isFirstGeneration = false; // Set flag to false after first generation
+    } else {
+        // Keep generating until we get different indices or reach max iterations
+        do {
+            randomVerbIndex = Math.floor(Math.random() * verbs.length);
+            randomNounIndex = Math.floor(Math.random() * nouns.length);
+            iterations++;
+            
+            // If we've tried too many times, just accept what we have
+            if (iterations >= MAX_ITERATIONS) {
+                break;
+            }
+        // Change this line to prevent either component from repeating
+        } while (randomVerbIndex === lastVerbIndex || randomNounIndex === lastNounIndex);
+    }
     
-    // Rest of function remains the same
     lastVerbIndex = randomVerbIndex;
     lastNounIndex = randomNounIndex;
     
