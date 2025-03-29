@@ -1,104 +1,102 @@
 const BACKGROUND_IMAGE = "images/pp3.webp";
 const IMAGE_QUALITY = 0.9; // For WebP/PNG exports
 
-// Array of verbs for slogan generation with translations
 const verbs = [
-    { english: "AXE", french: "SUPPRIMER" },
-    { english: "CUT", french: "COUPER" },
-    { english: "NIX", french: "RÉDUIRE" },
-    { english: "SCRAP", french: "ABANDONNER" },
-    { english: "DUMP", french: "JETTER" },
-    { english: "SLASH", french: "SABRER" },
-    { english: "FIX", french: "RÉPARER" },
-    { english: "STOP", french: "ARRÊTER" },
-    { english: "BUILD", french: "CONSTRUIRE" },
-    { english: "BOOST", french: "STIMULER" },
-    { english: "CRUSH", french: "ÉCRASER" },
-    { english: "END", french: "METTRE FIN À" },
-    { english: "CONTROL", french: "MAÎTRISER" },
-    { english: "DEFUND", french: "REMBOURSER" },
-    { english: "REIN IN", french: "FREINER" },
-    { english: "FREEZE", french: "GELER" },
-    { english: "DRAIN", french: "ASSÉCHER" },
-    { english: "TACKLE", french: "AFFRONTER" },
-    { english: "UNLEASH", french: "LIBÉRER" },
-    { english: "UNLOCK", french: "DÉBLOQUER" },
-    { english: "DEFEND", french: "DÉFENDRE" },
-    { english: "REBUILD", french: "RECONSTRUIRE" },
-    { english: "IGNITE", french: "ALLUMER" },
-    { english: "EMPOWER", french: "AUTONOMISER" },
-    { english: "CHAMPION", french: "DÉFENDRE" },
-    { english: "EXPLOIT", french: "EXPLOITER" },
-    { english: "RESTORE", french: "RESTAURER" },
-    { english: "DISRUPT", french: "PERTURBER" },
+    { en: "AXE", fr: "SUPPRIMER" },
+    { en: "CUT", fr: "COUPER" },
+    { en: "NIX", fr: "RÉDUIRE" },
+    { en: "SCRAP", fr: "ABANDONNER" },
+    { en: "DUMP", fr: "JETTER" },
+    { en: "SLASH", fr: "SABRER" },
+    { en: "FIX", fr: "RÉPARER" },
+    { en: "STOP", fr: "ARRÊTER" },
+    { en: "BUILD", fr: "CONSTRUIRE" },
+    { en: "BOOST", fr: "STIMULER" },
+    { en: "CRUSH", fr: "ÉCRASER" },
+    { en: "END", fr: "METTRE FIN À" },
+    { en: "CONTROL", fr: "MAÎTRISER" },
+    { en: "DEFUND", fr: "REMBOURSER" },
+    { en: "REIN IN", fr: "FREINER" },
+    { en: "FREEZE", fr: "GELER" },
+    { en: "DRAIN", fr: "ASSÉCHER" },
+    { en: "TACKLE", fr: "AFFRONTER" },
+    { en: "UNLEASH", fr: "LIBÉRER" },
+    { en: "UNLOCK", fr: "DÉBLOQUER" },
+    { en: "DEFEND", fr: "DÉFENDRE" },
+    { en: "REBUILD", fr: "RECONSTRUIRE" },
+    { en: "IGNITE", fr: "ALLUMER" },
+    { en: "EMPOWER", fr: "AUTONOMISER" },
+    { en: "CHAMPION", fr: "DÉFENDRE" },
+    { en: "EXPLOIT", fr: "EXPLOITER" },
+    { en: "RESTORE", fr: "RESTAURER" },
+    { en: "DISRUPT", fr: "PERTURBER" },
 ];
 
-// Array of nouns with their phrases (including appropriate articles)
 const nouns = [
-    { english: "THE TAX", french: "LES IMPÔTS" },
-    { english: "THE BUDGET", french: "LE BUDGET" },
-    { english: "THE CRIME", french: "LE CRIME" },
-    { english: "THE JOBS", french: "LES JOBS" },
-    { english: "THE HOUSES", french: "LES MAISONS" },
-    { english: "THE BORDERS", french: "LES FRONTIÈRES" },
-    { english: "THE COST OF LIVING", french: "LE COÛT DE LA VIE" },
-    { english: "THE HEALTH", french: "LES SOINS DE SANTÉ" },
-    { english: "THE EDUCATION", french: "L'ÉDUCATION" },
-    { english: "THE SCHOOLS", french: "LES ECOLES" },
-    { english: "THE CBC", french: "RADIO CANADA" },
-    { english: "THE QUEBEC", french: "LE QUEBEC" },
-    { english: "THE CITY MAYORS", french: "LES MAIRES DES VILLES" },
-    { english: "THE PUBLIC SECTOR", french: "LE SECTEUR PUBLIC" },
-    { english: "JUSTIN TRUDEAU", french: "JUSTIN TRUDEAU" },
-    { english: "THE LIBERALS", french: "LES LIBÉRAUX" },
-    { english: "THE BLOC", french: "LE BLOC" },
-    { english: "THE INFLATION", french: "L'INFLATION" },
-    { english: "THE SWAMP", french: "LE MARÉCAGE" },
-    { english: "THE RED TAPE", french: "LA BUREAUCRATIE" },
-    { english: "THE GAS PRICES", french: "LES PRIX DU CARBURANT" },
-    { english: "THE DEFICIT", french: "LE DÉFICIT" },
-    { english: "MY MISERY", french: "MA MISÈRE" },
-    { english: "MY LEADERSHIP", french: "MON LEADERSHIP" },
-    { english: "MY SEAT", french: "MON SIÈGE" },
-    { english: "MY SECURITY CLEARANCE", french: "HABILITATION DE SÉCURITÉ" },
-    { english: "THE WASTE", french: "LE GASPILLAGE" },
-    { english: "THE SYSTEM", french: "LE SYSTÈME" },
-    { english: "THE ECONOMY", french: "L'ÉCONOMIE" },
-    { english: "THE ESTABLISHMENT", french: "L'ESTABLISHMENT" },
-    { english: "THE STATUS QUO", french: "LE STATU QUO" },
-    { english: "THE MIDDLE CLASS", french: "LA CLASSE MOYENNE" },
-    { english: "THE SMALL BUSINESSES", french: "LES PETITES ENTREPRISES" },
-    { english: "THE FUTURE GENERATIONS", french: "LES GÉNÉRATIONS FUTURES" },
-    { english: "THE BUREAUCRACY", french: "LA BUREAUCRATIE" },
-    { english: "THE BIG GOVERNMENT", french: "LE GOUVERNEMENT TENTACULAIRE" },
-    { english: "THE FAMILY VALUES", french: "LES VALEURS FAMILIALES" },
-    { english: "THE CANADIAN DREAM", french: "LE RÊVE CANADIEN" },
-    { english: "THE BLOC MAJORITY", french: "LE BLOC MAJORITAIRE" },
-    { english: "THE DEMOCRACY", french: "LA DÉMOCRATIE" },
-    { english: "THE REGULATIONS", french: "LES RÈGLEMENTS" },
-    { english: "THE DEEP STATE", french: "L'ÉTAT PROFOND" },
-    { english: "THE POLITICAL CORRECTNESS", french: "LE POLITIQUEMENT CORRECT" },
-    { english: "THE WORKING CLASS", french: "LA CLASSE OUVRIÈRE" },
-    { english: "THE ENVIRONMENT", french: "L'ENVIRONNEMENT" },
-    { english: "THE TREES", french: "LES ARBRES" },
-
-    { english: "THE SALES TAX", french: "LA TAXE DE VENTE" },
-    { english: "SNEAKY CARNEY", french: "CARNEY SOURDIN" },
-    { english: "THE POLICE", french: "LA POLICE" },
-    { english: "THE MEDIA", french: "LES MÉDIAS" },
-    { english: "THE ELITE", french: "L'ÉLITE" },
-    { english: "THE NATION", french: "LA NATION" },
-    { english: "THE PEOPLE", french: "LE PEUPLE" },
-    { english: "THE FUTURE", french: "L'AVENIR" },
-    { english: "THE COUNTRY", french: "LE PAYS" },
-    { english: "THE REPUBLIC", french: "LA RÉPUBLIQUE" },
-    { english: "THE WORLD", french: "LE MONDE" },
-    { english: "THE PLANET", french: "LA PLANÈTE" },
-    { english: "THE UNIVERSE", french: "L'UNIVERS" },
-    { english: "THE GALAXY", french: "LA GALAXIE" },
-    { english: "THE COSMOS", french: "LE COSMOS" },
-    { english: "THE MULTIVERSE", french: "LE MULTIVERS" },
-    { english: "THE 51ST STATE", french: "LE 51e ÉTAT" }
+    { en: "THE TAX", fr: "LES IMPÔTS" },
+    { en: "THE BUDGET", fr: "LE BUDGET" },
+    { en: "THE CRIME", fr: "LE CRIME" },
+    { en: "THE JOBS", fr: "LES JOBS" },
+    { en: "THE HOUSES", fr: "LES MAISONS" },
+    { en: "THE BORDERS", fr: "LES FRONTIÈRES" },
+    { en: "THE COST OF LIVING", fr: "LE COÛT DE LA VIE" },
+    { en: "THE HEALTH", fr: "LES SOINS DE SANTÉ" },
+    { en: "THE EDUCATION", fr: "L'ÉDUCATION" },
+    { en: "THE SCHOOLS", fr: "LES ECOLES" },
+    { en: "THE CBC", fr: "RADIO CANADA" },
+    { en: "THE QUEBEC", fr: "LE QUEBEC" },
+    { en: "THE CITY MAYORS", fr: "LES MAIRES DES VILLES" },
+    { en: "THE PUBLIC SECTOR", fr: "LE SECTEUR PUBLIC" },
+    { en: "JUSTIN TRUDEAU", fr: "JUSTIN TRUDEAU" },
+    { en: "THE LIBERALS", fr: "LES LIBÉRAUX" },
+    { en: "THE BLOC", fr: "LE BLOC" },
+    { en: "THE INFLATION", fr: "L'INFLATION" },
+    { en: "THE SWAMP", fr: "LE MARÉCAGE" },
+    { en: "THE RED TAPE", fr: "LA BUREAUCRATIE" },
+    { en: "THE GAS PRICES", fr: "LES PRIX DU CARBURANT" },
+    { en: "THE DEFICIT", fr: "LE DÉFICIT" },
+    { en: "MY MISERY", fr: "MA MISÈRE" },
+    { en: "MY LEADERSHIP", fr: "MON LEADERSHIP" },
+    { en: "MY SEAT", fr: "MON SIÈGE" },
+    { en: "MY SECURITY CLEARANCE", fr: "HABILITATION DE SÉCURITÉ" },
+    { en: "MY PARTY", fr: "MON PARTI" },
+    { en: "THE WASTE", fr: "LE GASPILLAGE" },
+    { en: "THE SYSTEM", fr: "LE SYSTÈME" },
+    { en: "THE ECONOMY", fr: "L'ÉCONOMIE" },
+    { en: "THE ESTABLISHMENT", fr: "L'ESTABLISHMENT" },
+    { en: "THE STATUS QUO", fr: "LE STATU QUO" },
+    { en: "THE MIDDLE CLASS", fr: "LA CLASSE MOYENNE" },
+    { en: "THE SMALL BUSINESSES", fr: "LES PETITES ENTREPRISES" },
+    { en: "THE FUTURE GENERATIONS", fr: "LES GÉNÉRATIONS FUTURES" },
+    { en: "THE BUREAUCRACY", fr: "LA BUREAUCRATIE" },
+    { en: "THE BIG GOVERNMENT", fr: "LE GOUVERNEMENT TENTACULAIRE" },
+    { en: "THE FAMILY VALUES", fr: "LES VALEURS FAMILIALES" },
+    { en: "THE CANADIAN DREAM", fr: "LE RÊVE CANADIEN" },
+    { en: "THE BLOC MAJORITY", fr: "LE BLOC MAJORITAIRE" },
+    { en: "THE DEMOCRACY", fr: "LA DÉMOCRATIE" },
+    { en: "THE REGULATIONS", fr: "LES RÈGLEMENTS" },
+    { en: "THE DEEP STATE", fr: "L'ÉTAT PROFOND" },
+    { en: "THE POLITICAL CORRECTNESS", fr: "LE POLITIQUEMENT CORRECT" },
+    { en: "THE WORKING CLASS", fr: "LA CLASSE OUVRIÈRE" },
+    { en: "THE ENVIRONMENT", fr: "L'ENVIRONNEMENT" },
+    { en: "THE TREES", fr: "LES ARBRES" },
+    { en: "THE SALES TAX", fr: "LA TAXE DE VENTE" },
+    { en: "SNEAKY CARNEY", fr: "CARNEY SOURDIN" },
+    { en: "THE POLICE", fr: "LA POLICE" },
+    { en: "THE MEDIA", fr: "LES MÉDIAS" },
+    { en: "THE ELITE", fr: "L'ÉLITE" },
+    { en: "THE NATION", fr: "LA NATION" },
+    { en: "THE PEOPLE", fr: "LE PEUPLE" },
+    { en: "THE FUTURE", fr: "L'AVENIR" },
+    { en: "THE COUNTRY", fr: "LE PAYS" },
+    { en: "THE REPUBLIC", fr: "LA RÉPUBLIQUE" },
+    { en: "THE WORLD", fr: "LE MONDE" },
+    { en: "THE PLANET", fr: "LA PLANÈTE" },
+    { en: "THE UNIVERSE", fr: "L'UNIVERS" },
+    { en: "THE GALAXY", fr: "LA GALAXIE" },
+    { en: "THE COSMOS", fr: "LE COSMOS" },
+    { en: "THE MULTIVERSE", fr: "LE MULTIVERS" },
+    { en: "THE 51ST STATE", fr: "LE 51e ÉTAT" }
 ];
 
 let lastVerbIndex, lastNounIndex;
@@ -129,17 +127,17 @@ function generateSlogan() {
     const noun = nouns[randomNounIndex];
     
     // Generate slogans by simple concatenation
-    const englishSlogan = `${verb.english} ${noun.english}`;
-    const frenchSlogan = `${verb.french} ${noun.french}`;
+    const enSlogan = `${verb.en} ${noun.en}`;
+    const frSlogan = `${verb.fr} ${noun.fr}`;
     
     return {
-        english: englishSlogan,
-        french: frenchSlogan
+        en: enSlogan,
+        fr: frSlogan
     };
 }
 
 
-function createSharingImage(englishText, frenchText) {
+function createSharingImage(enText, frText) {
     return new Promise((resolve) => {
         const img = new Image();
         
@@ -157,10 +155,10 @@ function createSharingImage(englishText, frenchText) {
             const imageDataUrl = canvas.toDataURL('image/webp');
             
             // Calculate font sizes and positions
-            const textSettings = calculateTextSettings(englishText, frenchText, imageWidth, imageHeight);
+            const textSettings = calculateTextSettings(enText, frText, imageWidth, imageHeight);
             
             // Create the SVG with these settings
-            const svgContent = createSVGContent(imageDataUrl, textSettings, imageWidth, imageHeight, englishText, frenchText);
+            const svgContent = createSVGContent(imageDataUrl, textSettings, imageWidth, imageHeight, enText, frText);
             
             // Create blob from SVG content
             const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
@@ -181,36 +179,36 @@ function createSharingImage(englishText, frenchText) {
     });
 }
 
-function calculateTextSettings(englishText, frenchText, imageWidth, imageHeight) {
+function calculateTextSettings(enText, frText, imageWidth, imageHeight) {
     // Position text near the bottom of the image
     const textY = Math.round(imageHeight * 0.87);
     
     // Calculate font sizes based on text length
-    const englishLength = englishText.length;
-    const frenchLength = frenchText.length;
+    const enLength = enText.length;
+    const frLength = frText.length;
     
     // Base font size that scales with image width
     const baseFontSize = imageWidth * 0.029;
     
     // Adjust based on text length - longer text gets smaller font
-    const englishSize = Math.min(
-        Math.max(baseFontSize * (25 / Math.max(englishLength, 10)), 14),
+    const enSize = Math.min(
+        Math.max(baseFontSize * (25 / Math.max(enLength, 10)), 14),
         50
     );
-    const frenchSize = Math.min(
-        Math.max(baseFontSize * (25 / Math.max(frenchLength, 10)), 12),
+    const frSize = Math.min(
+        Math.max(baseFontSize * (25 / Math.max(frLength, 10)), 12),
         40
     );
     
     return {
-        englishY: textY - 30,
-        frenchY: textY + 30,
-        englishSize,
-        frenchSize
+        enY: textY - 30,
+        frY: textY + 30,
+        enSize,
+        frSize
     };
 }
 
-function createSVGContent(imageDataUrl, textSettings, imageWidth, imageHeight, englishText, frenchText) {
+function createSVGContent(imageDataUrl, textSettings, imageWidth, imageHeight, enText, frText) {
     return `
     <svg xmlns="http://www.w3.org/2000/svg" 
         width="100%" 
@@ -233,13 +231,13 @@ function createSVGContent(imageDataUrl, textSettings, imageWidth, imageHeight, e
         <image href="${imageDataUrl}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
         
         <!-- English slogan -->
-        <text class="slogan-text" x="${imageWidth/2}" y="${textSettings.englishY}" font-size="${textSettings.englishSize}">
-            ${englishText}
+        <text class="slogan-text" x="${imageWidth/2}" y="${textSettings.enY}" font-size="${textSettings.enSize}">
+            ${enText}
         </text>
         
         <!-- French slogan -->
-        <text class="slogan-text" x="${imageWidth/2}" y="${textSettings.frenchY}" font-size="${textSettings.frenchSize}">
-            ${frenchText}
+        <text class="slogan-text" x="${imageWidth/2}" y="${textSettings.frY}" font-size="${textSettings.frSize}">
+            ${frText}
         </text>
     </svg>`;
 }
@@ -257,12 +255,12 @@ function updateSlogan() {
     container.innerHTML = '<div class="loading">Generating slogan...</div>';
     
     // Generate the shareable image with the slogan
-    createSharingImage(slogans.english, slogans.french)
+    createSharingImage(slogans.en, slogans.fr)
         .then(result => {
             // Create an image with the SVG data URI
             const img = document.createElement('img');
             img.src = result.url;
-            img.alt = `Campaign slogan: ${slogans.english} / ${slogans.french}`;
+            img.alt = `Campaign slogan: ${slogans.en} / ${slogans.fr}`;
             img.className = 'fade-in';
             
             // Store SVG content for sharing
@@ -277,8 +275,8 @@ function updateSlogan() {
             container.innerHTML = `
                 <div class="error-message">
                     <p>Error generating image</p>
-                    <p>English: ${slogans.english}</p>
-                    <p>French: ${slogans.french}</p>
+                    <p>English: ${slogans.en}</p>
+                    <p>French: ${slogans.fr}</p>
                 </div>`;
         });
 }
@@ -330,8 +328,8 @@ function extractTextFromSVG(svgContent) {
     const texts = svgDoc.querySelectorAll('text');
     
     let result = {
-        english: { text: "", y: 0, fontSize: 0 },
-        french: { text: "", y: 0, fontSize: 0 }
+        en: { text: "", y: 0, fontSize: 0 },
+        fr: { text: "", y: 0, fontSize: 0 }
     };
     
     texts.forEach((text, index) => {
@@ -340,9 +338,9 @@ function extractTextFromSVG(svgContent) {
         const fontSize = parseFloat(text.getAttribute('font-size'));
         
         if (index === 0) {  // First text element (English)
-            result.english = { text: content, y: y, fontSize: fontSize };
+            result.en = { text: content, y: y, fontSize: fontSize };
         } else {  // Second text element (French)
-            result.french = { text: content, y: y, fontSize: fontSize };
+            result.fr = { text: content, y: y, fontSize: fontSize };
         }
     });
     
@@ -362,12 +360,12 @@ function renderTextOnCanvas(ctx, canvasWidth, textInfo) {
     ctx.shadowOffsetY = 2;
     
     // Draw English text
-    ctx.font = `bold ${textInfo.english.fontSize}px Arial, sans-serif`;
-    ctx.fillText(textInfo.english.text, canvasWidth / 2, textInfo.english.y);
+    ctx.font = `bold ${textInfo.en.fontSize}px Arial, sans-serif`;
+    ctx.fillText(textInfo.en.text, canvasWidth / 2, textInfo.en.y);
     
     // Draw French text
-    ctx.font = `bold ${textInfo.french.fontSize}px Arial, sans-serif`;
-    ctx.fillText(textInfo.french.text, canvasWidth / 2, textInfo.french.y);
+    ctx.font = `bold ${textInfo.fr.fontSize}px Arial, sans-serif`;
+    ctx.fillText(textInfo.fr.text, canvasWidth / 2, textInfo.fr.y);
 }
 
 

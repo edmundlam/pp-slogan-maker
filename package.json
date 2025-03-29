@@ -1,0 +1,23 @@
+{
+  "name": "pp-slogan-maker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edmundlam/pp-slogan-maker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/edmundlam/pp-slogan-maker/issues"
+  },
+  "homepage": "https://github.com/edmundlam/pp-slogan-maker#readme",
+  "devDependencies": {
+    "terser": "^5.39.0"
+  }
+}
