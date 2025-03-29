@@ -118,22 +118,19 @@ function generateSlogan() {
         if (iterations >= MAX_ITERATIONS) {
             break;
         }
-    } while (randomVerbIndex === lastVerbIndex && randomNounIndex === lastNounIndex);
+    // Change this line to prevent either component from repeating
+    } while (randomVerbIndex === lastVerbIndex || randomNounIndex === lastNounIndex);
     
-    // Store current indices for next comparison
+    // Rest of function remains the same
     lastVerbIndex = randomVerbIndex;
     lastNounIndex = randomNounIndex;
     
     const verb = verbs[randomVerbIndex];
     const noun = nouns[randomNounIndex];
     
-    // Generate slogans by simple concatenation
-    const enSlogan = `${verb.en} ${noun.en}`;
-    const frSlogan = `${verb.fr} ${noun.fr}`;
-    
     return {
-        en: enSlogan,
-        fr: frSlogan
+        en: `${verb.en} ${noun.en}`,
+        fr: `${verb.fr} ${noun.fr}`
     };
 }
 
@@ -372,11 +369,13 @@ function renderTextOnCanvas(ctx, canvasWidth, textInfo) {
 
 // Function to download the shareable image
 function exportCanvas(canvas, svgContent, options) {
-    const { asDownload = false, filename = 'campaign-slogan' } = options || {};
+    const { asDownload = false, filename = 'pp-slogan' } = options || {};
     
-    // Try WebP first
+    // Try jpeg first
     try {
-        exportCanvasAs(canvas, 'webp', `${filename}.webp`, asDownload);
+        // exportCanvasAs(canvas, 'webp', `${filename}.webp`, asDownload);
+        // exportCanvasAs(canvas, 'png', `${filename}.png`, asDownload);
+        exportCanvasAs(canvas, 'jpeg', `${filename}.jpg`, asDownload);
     } catch (e) {
         console.error("Error creating WebP:", e);
         
