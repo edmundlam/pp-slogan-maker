@@ -2,16 +2,16 @@ const BACKGROUND_IMAGE = "images/pp3.webp";
 const IMAGE_QUALITY = 0.9; // For WebP/PNG exports
 
 const verbs = [
-    { en: "AXE", fr: "SUPPRIMER" },
+    { en: "AXE", fr: "HACHER" },
     { en: "CUT", fr: "COUPER" },
     { en: "NIX", fr: "RÉDUIRE" },
-    { en: "SCRAP", fr: "ABANDONNER" },
+    { en: "SCRAP", fr: "SCRAPPER" },
     { en: "DUMP", fr: "JETTER" },
-    { en: "SLASH", fr: "SABRER" },
+    { en: "SLASH", fr: "SLASHER" },
     { en: "FIX", fr: "RÉPARER" },
-    { en: "STOP", fr: "ARRÊTER" },
+    { en: "STOP", fr: "STOPPER" },
     { en: "BUILD", fr: "CONSTRUIRE" },
-    { en: "BOOST", fr: "STIMULER" },
+    { en: "BOOST", fr: "BOOSTER" },
     { en: "CRUSH", fr: "ÉCRASER" },
     { en: "END", fr: "METTRE FIN À" },
     { en: "CONTROL", fr: "MAÎTRISER" },
@@ -19,17 +19,18 @@ const verbs = [
     { en: "REIN IN", fr: "FREINER" },
     { en: "FREEZE", fr: "GELER" },
     { en: "DRAIN", fr: "ASSÉCHER" },
-    { en: "TACKLE", fr: "AFFRONTER" },
+    { en: "TACKLE", fr: "TACKLER" },
     { en: "UNLEASH", fr: "LIBÉRER" },
     { en: "UNLOCK", fr: "DÉBLOQUER" },
     { en: "DEFEND", fr: "DÉFENDRE" },
     { en: "REBUILD", fr: "RECONSTRUIRE" },
     { en: "IGNITE", fr: "ALLUMER" },
     { en: "EMPOWER", fr: "AUTONOMISER" },
-    { en: "CHAMPION", fr: "DÉFENDRE" },
+    { en: "CHAMPION", fr: "CHAMPIONER" },
     { en: "EXPLOIT", fr: "EXPLOITER" },
     { en: "RESTORE", fr: "RESTAURER" },
     { en: "DISRUPT", fr: "PERTURBER" },
+    { en: "YEET", fr: "YEETER" },
 ];
 
 const nouns = [
@@ -61,6 +62,7 @@ const nouns = [
     { en: "MY SECURITY CLEARANCE", fr: "HABILITATION DE SÉCURITÉ" },
     { en: "MY PARTY", fr: "MON PARTI" },
     { en: "THE WASTE", fr: "LE GASPILLAGE" },
+    { en: "THE SUITS", fr: "LES COSTUMES" },
     { en: "THE SYSTEM", fr: "LE SYSTÈME" },
     { en: "THE ECONOMY", fr: "L'ÉCONOMIE" },
     { en: "THE ESTABLISHMENT", fr: "L'ESTABLISHMENT" },
@@ -89,7 +91,6 @@ const nouns = [
     { en: "THE PEOPLE", fr: "LE PEUPLE" },
     { en: "THE FUTURE", fr: "L'AVENIR" },
     { en: "THE COUNTRY", fr: "LE PAYS" },
-    { en: "THE REPUBLIC", fr: "LA RÉPUBLIQUE" },
     { en: "THE WORLD", fr: "LE MONDE" },
     { en: "THE PLANET", fr: "LA PLANÈTE" },
     { en: "THE UNIVERSE", fr: "L'UNIVERS" },
@@ -361,7 +362,7 @@ function renderTextOnCanvas(ctx, canvasWidth, textInfo) {
     
     // Draw English text
     ctx.font = `bold ${textInfo.en.fontSize}px Arial, sans-serif`;
-    ctx.fillText(textInfo.en.text, canvasWidth / 2, textInfo.en.y);
+    ctx.fillText(textInfo.en.text, canvasWidth / 2, textInfo.en.y - 10);
     
     // Draw French text
     ctx.font = `bold ${textInfo.fr.fontSize}px Arial, sans-serif`;
