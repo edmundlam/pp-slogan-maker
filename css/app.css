@@ -63,14 +63,13 @@
   }
   
   /* Button styling */
-
   .button-container {
     margin-top: 20px;
     text-align: center;
   }
 
   #generateButton {
-    background-color: #e63946; /* Red */
+    background-color: #db616c; /* Red */
     color: white;
     border: none;
     border-radius: 30px;
@@ -83,7 +82,7 @@
   }
 
   #generateButton:hover {
-    background-color: #d62828; /* Darker red */
+    background-color: #d53a3a; /* Darker red */
     transform: translateY(-2px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
   }

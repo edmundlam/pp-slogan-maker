@@ -59,6 +59,7 @@ const nouns = [
     { english: "THE DEFICIT", french: "LE DÉFICIT" },
     { english: "MY MISERY", french: "MA MISÈRE" },
     { english: "MY LEADERSHIP", french: "MON LEADERSHIP" },
+    { english: "MY SEAT", french: "MON SIÈGE" },
     { english: "MY SECURITY CLEARANCE", french: "HABILITATION DE SÉCURITÉ" },
     { english: "THE WASTE", french: "LE GASPILLAGE" },
     { english: "THE SYSTEM", french: "LE SYSTÈME" },
