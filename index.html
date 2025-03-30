@@ -29,11 +29,27 @@
             <button id="generateButton" aria-label="Redo the slogan">REDO THE SLOGAN</button>
             <button id="shareButton" aria-label="Share the slogan">EXPORT THE SLOGAN</button>
             <button id="downloadButton" aria-label="Download the slogan">DOWNLOAD THE SLOGAN</button>
+            <button id="customizeButton" aria-label="Customize the slogan">CUSTOMIZE THE SLOGAN</button>
         </div>
+        <div id="customize-form" class="customize-form hidden">
+            <!-- <div class="form-header">
+              <button id="closeCustomizeForm" class="close-button" aria-label="Close form">×</button>
+            </div> -->
+            <div class="form-body">
+              <div class="form-group">
+                <label for="customSloganEn">Top Text:</label>
+                <input type="text" id="customSloganEn" name="customSloganEn" placeholder="AXE THE TAX" maxlength="50">
+              </div>
+              <div class="form-group">
+                <label for="customSloganFr">Bottom Text:</label>
+                <input type="text" id="customSloganFr" name="customSloganFr" placeholder="HACHER LES IMPÔTS" maxlength="60">
+              </div>
+            </div>
+          </div>
     </main>
     <footer>
         <a href="https://www.reddit.com/r/ehbuddyhoser" target="_blank" rel="noopener noreferrer">r/ehbuddyhoser</a>
     </footer>
-    <script src="js/app.min.js?v=1.1"></script>
+    <script src="js/app.min.js?v=1.2"></script>
 </body>
 </html>

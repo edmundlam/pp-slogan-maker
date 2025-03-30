@@ -70,6 +70,7 @@ const nouns = [
     { en: "MY PARTY", fr: "MON PARTI" },
     { en: "MY LEADERSHIP", fr: "MON LEADERSHIP" },
     { en: "MY SEAT", fr: "MON SIÈGE" },
+    { en: "MY RIDING", fr: "MA CIRCONSCRIPTION" },
     { en: "MY SECURITY CLEARANCE", fr: "HABILITATION DE SÉCURITÉ" },
     { en: "MY PARTY", fr: "MON PARTI" },
     { en: "THE WASTE", fr: "LE GASPILLAGE" },
@@ -116,6 +117,15 @@ let isFirstGeneration = true;
 
 // Function to generate a random slogan in both languages
 function generateSlogan() {
+    // If in customize mode and we have custom text, use that instead of random
+    if (isCustomizing && (customSloganEn || customSloganFr)) {
+        return {
+            en: customSloganEn || "",
+            fr: customSloganFr || ""
+        };
+    }
+
+    // Original random generation logic
     let randomVerbIndex, randomNounIndex;
     let iterations = 0;
     const MAX_ITERATIONS = 10; // Prevent infinite loop
@@ -507,6 +517,101 @@ function downloadAsSVG(svgContent) {
 }
 
 
+
+// New variables for customization
+let isCustomizing = false;
+let customSloganEn = "";
+let customSloganFr = "";
+
+// Function to toggle the customization form
+function toggleCustomizeForm() {
+    const form = document.getElementById('customize-form');
+    isCustomizing = !isCustomizing;
+    
+    if (isCustomizing) {
+        form.classList.remove('hidden');
+        // Focus on the first input field
+        document.getElementById('customSloganEn').focus();
+    } else {
+        form.classList.add('hidden');
+        // Reset custom values if the form is being closed
+        customSloganEn = "";
+        customSloganFr = "";
+        document.getElementById('customSloganEn').value = "";
+        document.getElementById('customSloganFr').value = "";
+    }
+}
+
+// Function to explicitly close the form (not toggle)
+function closeCustomizeForm() {
+    const form = document.getElementById('customize-form');
+    if (isCustomizing) {
+        isCustomizing = false;
+        form.classList.add('hidden');
+        // Reset custom values
+        customSloganEn = "";
+        customSloganFr = "";
+        document.getElementById('customSloganEn').value = "";
+        document.getElementById('customSloganFr').value = "";
+    }
+}
+
+// Function to reset custom inputs
+function resetCustomInputs() {
+    document.getElementById('customSloganEn').value = "";
+    document.getElementById('customSloganFr').value = "";
+    customSloganEn = "";
+    customSloganFr = "";
+    
+    // Update the slogan immediately after reset
+    updateCustomSlogan();
+}
+
+// Function to update the slogan based on custom input
+function updateCustomSlogan() {
+    // Get current values from inputs
+    customSloganEn = document.getElementById('customSloganEn').value.trim().toUpperCase();
+    customSloganFr = document.getElementById('customSloganFr').value.trim().toUpperCase();
+    
+    // Only update if at least one field has content
+    if (customSloganEn || customSloganFr) {
+        // Don't show loading state for faster updates
+        // Just keep the current image until the new one is ready
+        
+        // Generate the image with custom text
+        createSharingImage(customSloganEn, customSloganFr)
+            .then(result => {
+                // Create an image with the SVG data URI
+                const img = document.createElement('img');
+                img.src = result.url;
+                img.alt = `Campaign slogan: ${customSloganEn} / ${customSloganFr}`;
+                // Remove the fade-in class to avoid animation
+                img.className = 'fade-in';
+                
+                // Store SVG content for sharing
+                img.dataset.svgContent = result.svgContent;
+                
+                // Clear container and add the new image
+                const container = document.getElementById('podium-container');
+                container.innerHTML = '';
+                container.appendChild(img);
+            })
+            .catch(error => {
+                console.error("Error creating custom slogan image:", error);
+                const container = document.getElementById('podium-container');
+                container.innerHTML = `
+                    <div class="error-message">
+                        <p>Error generating image</p>
+                        <p>English: ${customSloganEn}</p>
+                        <p>French: ${customSloganFr}</p>
+                    </div>`;
+            });
+    } else {
+        // If both fields are empty, generate a random slogan
+        updateSlogan();
+    }
+}
+
 // Add animation styles
 function addAnimationStyles() {
     if (!document.querySelector('style#slogan-animations')) {
@@ -549,15 +654,30 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSlogan();
     
     // Set up button handlers
-    document.getElementById('generateButton').addEventListener('click', updateSlogan);
+    document.getElementById('generateButton').addEventListener('click', () => {
+        // If customization form is open, close it first
+        if (isCustomizing) {
+            // Close the form (don't toggle)
+            closeCustomizeForm();
+        }
+        // Generate a new random slogan
+        updateSlogan();
+    });
     document.getElementById('downloadButton').addEventListener('click', downloadShareableImage);
     document.getElementById('shareButton').addEventListener('click', shareInNewTab);
     
-    // Add spacebar handler
-    document.addEventListener('keydown', function(event) {
-        if (event.code === 'Space') {
-            updateSlogan();
-            event.preventDefault();
-        }
+    // New event listeners for customization
+    document.getElementById('customizeButton').addEventListener('click', toggleCustomizeForm);
+    
+    // Add input event listeners for live updates
+    document.getElementById('customSloganEn').addEventListener('input', () => {
+        // Debounce the input to avoid too many updates
+        clearTimeout(window.customSloganTimer);
+        window.customSloganTimer = setTimeout(updateCustomSlogan, 300);
+    });
+    document.getElementById('customSloganFr').addEventListener('input', () => {
+        // Debounce the input to avoid too many updates
+        clearTimeout(window.customSloganTimer);
+        window.customSloganTimer = setTimeout(updateCustomSlogan, 300);
     });
 });
