@@ -251,6 +251,12 @@ function createSVGContent(imageDataUrl, textSettings, imageWidth, imageHeight, e
                     text-anchor: middle;
                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
                 }
+                .watermark {
+                    font-family: Arial, sans-serif;
+                    font-size: 12px;
+                    fill: rgba(255, 255, 255, 0.5);
+                    text-anchor: end;
+                }
             </style>
         </defs>
         
@@ -265,6 +271,11 @@ function createSVGContent(imageDataUrl, textSettings, imageWidth, imageHeight, e
         <!-- French slogan -->
         <text class="slogan-text" x="${imageWidth/2}" y="${textSettings.frY}" font-size="${textSettings.frSize}">
             ${frText}
+        </text>
+        
+        <!-- Watermark -->
+        <text class="watermark" x="${imageWidth - 15}" y="${imageHeight - 10}">
+            pp-slogan-maker
         </text>
     </svg>`;
 }
@@ -333,8 +344,8 @@ function processImage(svgContent, callback) {
         // Extract text info from SVG
         const textInfo = extractTextFromSVG(svgContent);
         
-        // Draw text on canvas
-        renderTextOnCanvas(ctx, canvas.width, textInfo);
+        // Draw text on canvas - pass the height parameter
+        renderTextOnCanvas(ctx, canvas.width, canvas.height, textInfo);
         
         // Execute callback with canvas and SVG content
         callback(canvas, svgContent);
@@ -366,7 +377,7 @@ function extractTextFromSVG(svgContent) {
         
         if (index === 0) {  // First text element (English)
             result.en = { text: content, y: y, fontSize: fontSize };
-        } else {  // Second text element (French)
+        } else if (index === 1) {  // Second text element (French)
             result.fr = { text: content, y: y, fontSize: fontSize };
         }
     });
@@ -374,7 +385,7 @@ function extractTextFromSVG(svgContent) {
     return result;
 }
 
-function renderTextOnCanvas(ctx, canvasWidth, textInfo) {
+function renderTextOnCanvas(ctx, canvasWidth, canvasHeight, textInfo) {
     // Set up text styling
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
@@ -393,6 +404,15 @@ function renderTextOnCanvas(ctx, canvasWidth, textInfo) {
     // Draw French text
     ctx.font = `bold ${textInfo.fr.fontSize}px Arial, sans-serif`;
     ctx.fillText(textInfo.fr.text, canvasWidth / 2, textInfo.fr.y);
+    
+    // Draw watermark
+    ctx.font = '12px Arial, sans-serif';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.textAlign = 'right';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.fillText('pp-slogan-maker', canvasWidth - 15, canvasHeight - 10);
 }
 
 
