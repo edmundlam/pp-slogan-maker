@@ -354,3 +354,12 @@
       max-width: 300px;
     }
   }
+
+  .github-link img {
+      background-color: rgb(255, 255, 255); /* White background */
+      border-radius: 50%; /* Makes it a circle */
+      padding: 4px; /* Adds some space inside the circle */
+      width: 32px; /* Slightly bigger for better visibility */
+      height: 32px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional: Adds a slight shadow for better contrast */
+  }
