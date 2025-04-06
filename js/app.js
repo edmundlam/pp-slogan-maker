@@ -4,13 +4,14 @@ const BACKGROUND_IMAGE = "images/pp3.webp";
 const BACKGROUND_IMAGES = {
     "pp3": {
       path: "images/pp3.webp",
-      name: "Pierre Classic",
       textSettings: {
         yPositionRatio: 0.87,      // Position from top (as percentage of height)
         enYOffset: -30,            // English text offset from base position
         frYOffset: 30,             // French text offset from base position
+        enXOffset: -5,              // English text horizontal offset from center
+        frXOffset: -5,              // French text horizontal offset from center
         fontSizeRatio: 0.029,      // Base font size relative to image width
-        maxFontSize: {en: 50, fr: 40},
+        maxFontSize: {en: 50, fr: 50},
         minFontSize: {en: 14, fr: 12}
       }
     },
@@ -21,8 +22,38 @@ const BACKGROUND_IMAGES = {
         yPositionRatio: 0.85,      // Position from top (as percentage of height)
         enYOffset: -30,            // English text offset from base position
         frYOffset: 20,             // French text offset from base position
+        enXOffset: 5,              // English text horizontal offset from center
+        frXOffset: 5,              // French text horizontal offset from center
         fontSizeRatio: 0.029,      // Base font size relative to image width
-        maxFontSize: {en: 50, fr: 40},
+        maxFontSize: {en: 50, fr: 50},
+        minFontSize: {en: 14, fr: 12}
+      }
+    },
+    "pp5": {
+      path: "images/pp5.webp",
+      name: "Pierre at Rally",
+      textSettings: {
+        yPositionRatio: 0.93,      // Position from top (as percentage of height)
+        enYOffset: -30,            // English text offset from base position
+        frYOffset: 20,             // French text offset from base position
+        enXOffset: 0,              // English text horizontal offset from center
+        frXOffset: 0,              // French text horizontal offset from center
+        fontSizeRatio: 0.029,      // Base font size relative to image width
+        maxFontSize: {en: 50, fr: 50},
+        minFontSize: {en: 14, fr: 12}
+      }
+    },
+    "pp6": {
+      path: "images/pp6.webp",
+      name: "Pierre at Rally",
+      textSettings: {
+        yPositionRatio: 0.85,      // Position from top (as percentage of height)
+        enYOffset: -35,            // English text offset from base position
+        frYOffset: 50,             // French text offset from base position
+        enXOffset: 30,              // English text horizontal offset from center (NEW)
+        frXOffset: 30,              // French text horizontal offset from center (NEW)
+        fontSizeRatio: 0.034,      // Base font size relative to image width
+        maxFontSize: {en: 50, fr: 50},
         minFontSize: {en: 14, fr: 12}
       }
     }
@@ -32,7 +63,7 @@ const BACKGROUND_IMAGES = {
   let currentImageKey = "pp4";
 
 
-const IMAGE_QUALITY = 0.9; // For WebP/PNG exports
+const IMAGE_QUALITY = 1.0; // For WebP/PNG exports
 
 const verbs = [
     { en: "AXE", fr: "HACHER" },
@@ -268,9 +299,15 @@ function calculateTextSettings(enText, frText, imageWidth, imageHeight) {
         imageConfig.textSettings.maxFontSize.fr
     );
     
+    // Get horizontal offsets from config (default to 0 if not specified)
+    const enXOffset = imageConfig.textSettings.enXOffset || 0;
+    const frXOffset = imageConfig.textSettings.frXOffset || 0;
+    
     return {
         enY: baseY + imageConfig.textSettings.enYOffset,
         frY: baseY + imageConfig.textSettings.frYOffset,
+        enX: imageWidth/2 + enXOffset,
+        frX: imageWidth/2 + frXOffset,
         enSize,
         frSize
     };
@@ -305,12 +342,12 @@ function createSVGContent(imageDataUrl, textSettings, imageWidth, imageHeight, e
         <image href="${imageDataUrl}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
         
         <!-- English slogan -->
-        <text class="slogan-text" x="${imageWidth/2}" y="${textSettings.enY}" font-size="${textSettings.enSize}">
+        <text class="slogan-text" x="${textSettings.enX}" y="${textSettings.enY}" font-size="${textSettings.enSize}">
             ${enText}
         </text>
         
         <!-- French slogan -->
-        <text class="slogan-text" x="${imageWidth/2}" y="${textSettings.frY}" font-size="${textSettings.frSize}">
+        <text class="slogan-text" x="${textSettings.frX}" y="${textSettings.frY}" font-size="${textSettings.frSize}">
             ${frText}
         </text>
         
@@ -413,9 +450,6 @@ function cycleBackgroundImage() {
     // Update current image key
     currentImageKey = nextImageKey;
     
-    // Update the button text to show current image name
-    updateCycleButtonText();
-    
     // Get current slogan from the image
     const currentSlogan = getCurrentSlogan();
     
@@ -486,15 +520,6 @@ function updateSloganWithText(enText, frText) {
         });
 }
 
-// Function to update the cycle button text with current image name
-function updateCycleButtonText() {
-    const cycleButton = document.getElementById('cycleImageButton');
-    if (cycleButton) {
-      const currentImage = BACKGROUND_IMAGES[currentImageKey];
-      cycleButton.title = `Change background (currently: ${currentImage.name})`;
-    }
-}
-
 
 function extractTextFromSVG(svgContent) {
     const parser = new DOMParser();
@@ -502,19 +527,20 @@ function extractTextFromSVG(svgContent) {
     const texts = svgDoc.querySelectorAll('text');
     
     let result = {
-        en: { text: "", y: 0, fontSize: 0 },
-        fr: { text: "", y: 0, fontSize: 0 }
+        en: { text: "", y: 0, fontSize: 0, x: 0 },
+        fr: { text: "", y: 0, fontSize: 0, x: 0 }
     };
     
     texts.forEach((text, index) => {
         const content = text.textContent.trim();
         const y = parseFloat(text.getAttribute('y'));
         const fontSize = parseFloat(text.getAttribute('font-size'));
+        const x = parseFloat(text.getAttribute('x'));
         
         if (index === 0) {  // First text element (English)
-            result.en = { text: content, y: y, fontSize: fontSize };
+            result.en = { text: content, y: y, fontSize: fontSize, x: x };
         } else if (index === 1) {  // Second text element (French)
-            result.fr = { text: content, y: y, fontSize: fontSize };
+            result.fr = { text: content, y: y, fontSize: fontSize, x: x };
         }
     });
     
@@ -535,11 +561,11 @@ function renderTextOnCanvas(ctx, canvasWidth, canvasHeight, textInfo) {
     
     // Draw English text
     ctx.font = `bold ${textInfo.en.fontSize}px Arial, sans-serif`;
-    ctx.fillText(textInfo.en.text, canvasWidth / 2, textInfo.en.y - 10);
+    ctx.fillText(textInfo.en.text, textInfo.en.x, textInfo.en.y - 10);
     
     // Draw French text
     ctx.font = `bold ${textInfo.fr.fontSize}px Arial, sans-serif`;
-    ctx.fillText(textInfo.fr.text, canvasWidth / 2, textInfo.fr.y);
+    ctx.fillText(textInfo.fr.text, textInfo.fr.x, textInfo.fr.y);
     
     // Draw watermark
     ctx.font = '12px Arial, sans-serif';
