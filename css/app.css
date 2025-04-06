@@ -206,6 +206,42 @@
   }
 
 
+  /* Image cycle button styling */
+  #cycleImageButton {
+    background-color: #db616c; /* Purple */
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-left: 10px;
+  }
+
+  #cycleImageButton:hover {
+    background-color: #d53a3a; /* Lighter purple */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  #cycleImageButton:active {
+    transform: translateY(0);
+  }
+
+  /* Responsive adjustment for the image cycle button */
+  @media (max-width: 768px) {
+    #cycleImageButton {
+      margin-left: 0;
+      margin-top: 10px;
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+
+
   /* Customize button styling */
   #customizeButton {
     background-color: #4cc9f0; /* Light blue */

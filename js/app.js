@@ -402,6 +402,46 @@ function processImage(svgContent, callback) {
     originalImg.src = currentImagePath;
 }
 
+
+// Function to cycle to the next background image
+function cycleBackgroundImage() {
+    const imageKeys = Object.keys(BACKGROUND_IMAGES);
+    const currentIndex = imageKeys.indexOf(currentImageKey);
+    const nextIndex = (currentIndex + 1) % imageKeys.length;
+    const nextImageKey = imageKeys[nextIndex];
+    
+    // Update current image key
+    currentImageKey = nextImageKey;
+    
+    // Save selection to localStorage
+    localStorage.setItem('pp-slogan-maker-image', nextImageKey);
+    
+    // Update the button text to show current image name
+    updateCycleButtonText();
+    
+    // Generate a new slogan with the selected image
+    updateSlogan();
+  }
+
+// Function to update the cycle button text with current image name
+function updateCycleButtonText() {
+    const cycleButton = document.getElementById('cycleImageButton');
+    if (cycleButton) {
+      const currentImage = BACKGROUND_IMAGES[currentImageKey];
+      cycleButton.title = `Change background (currently: ${currentImage.name})`;
+    }
+}
+
+// Function to load the saved image selection
+function loadSavedImageSelection() {
+    const savedImage = localStorage.getItem('pp-slogan-maker-image');
+    if (savedImage && BACKGROUND_IMAGES[savedImage]) {
+      currentImageKey = savedImage;
+    }
+    updateCycleButtonText();
+}
+
+
 function extractTextFromSVG(svgContent) {
     const parser = new DOMParser();
     const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
@@ -742,4 +782,12 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(window.customSloganTimer);
         window.customSloganTimer = setTimeout(updateCustomSlogan, 300);
     });
+
+    // Load saved image selection
+    loadSavedImageSelection();
+    
+    // Set up cycle button handler
+    document.getElementById('cycleImageButton').addEventListener('click', cycleBackgroundImage);
+  
+
 });
