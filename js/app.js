@@ -1,4 +1,37 @@
 const BACKGROUND_IMAGE = "images/pp3.webp";
+
+// Replace the single BACKGROUND_IMAGE constant with this configuration
+const BACKGROUND_IMAGES = {
+    "pp3": {
+      path: "images/pp3.webp",
+      name: "Pierre Classic",
+      textSettings: {
+        yPositionRatio: 0.87,      // Position from top (as percentage of height)
+        enYOffset: -30,            // English text offset from base position
+        frYOffset: 30,             // French text offset from base position
+        fontSizeRatio: 0.029,      // Base font size relative to image width
+        maxFontSize: {en: 50, fr: 40},
+        minFontSize: {en: 14, fr: 12}
+      }
+    },
+    "pp4": {
+      path: "images/pp4.webp",
+      name: "Pierre at Rally",
+      textSettings: {
+        yPositionRatio: 0.85,      // Position from top (as percentage of height)
+        enYOffset: -30,            // English text offset from base position
+        frYOffset: 20,             // French text offset from base position
+        fontSizeRatio: 0.029,      // Base font size relative to image width
+        maxFontSize: {en: 50, fr: 40},
+        minFontSize: {en: 14, fr: 12}
+      }
+    }
+  };
+  
+  // Default image key
+  let currentImageKey = "pp4";
+
+
 const IMAGE_QUALITY = 0.9; // For WebP/PNG exports
 
 const verbs = [
@@ -167,6 +200,7 @@ function generateSlogan() {
 function createSharingImage(enText, frText) {
     return new Promise((resolve) => {
         const img = new Image();
+        const currentImagePath = BACKGROUND_IMAGES[currentImageKey].path;
         
         img.onload = function() {
             const imageWidth = img.naturalWidth;
@@ -198,38 +232,45 @@ function createSharingImage(enText, frText) {
         };
         
         img.onerror = function() {
-            console.error("Failed to load image:", BACKGROUND_IMAGE);
+            console.error("Failed to load image:", currentImagePath);
             resolve({ error: true, message: "Failed to load background image" });
         };
         
-        img.src = BACKGROUND_IMAGE;
+        // Load the current image
+        img.src = currentImagePath;
     });
 }
 
 function calculateTextSettings(enText, frText, imageWidth, imageHeight) {
-    // Position text near the bottom of the image
-    const textY = Math.round(imageHeight * 0.87);
+    // Get the current image configuration
+    const imageConfig = BACKGROUND_IMAGES[currentImageKey];
+    
+    // Calculate the base Y position using the ratio from config
+    const baseY = Math.round(imageHeight * imageConfig.textSettings.yPositionRatio);
     
     // Calculate font sizes based on text length
     const enLength = enText.length;
     const frLength = frText.length;
     
-    // Base font size that scales with image width
-    const baseFontSize = imageWidth * 0.029;
+    // Base font size that scales with image width (from config)
+    const baseFontSize = imageWidth * imageConfig.textSettings.fontSizeRatio;
     
     // Adjust based on text length - longer text gets smaller font
     const enSize = Math.min(
-        Math.max(baseFontSize * (25 / Math.max(enLength, 10)), 14),
-        50
+        Math.max(baseFontSize * (25 / Math.max(enLength, 10)), 
+                imageConfig.textSettings.minFontSize.en),
+        imageConfig.textSettings.maxFontSize.en
     );
+    
     const frSize = Math.min(
-        Math.max(baseFontSize * (25 / Math.max(frLength, 10)), 12),
-        40
+        Math.max(baseFontSize * (25 / Math.max(frLength, 10)), 
+                imageConfig.textSettings.minFontSize.fr),
+        imageConfig.textSettings.maxFontSize.fr
     );
     
     return {
-        enY: textY - 30,
-        frY: textY + 30,
+        enY: baseY + imageConfig.textSettings.enYOffset,
+        frY: baseY + imageConfig.textSettings.frYOffset,
         enSize,
         frSize
     };
@@ -327,8 +368,9 @@ function processImage(svgContent, callback) {
         return;
     }
     
-    // Load the original background image directly
+    // Load the current background image
     const originalImg = new Image();
+    const currentImagePath = BACKGROUND_IMAGES[currentImageKey].path;
     
     originalImg.onload = function() {
         const canvas = document.createElement('canvas');
@@ -344,7 +386,7 @@ function processImage(svgContent, callback) {
         // Extract text info from SVG
         const textInfo = extractTextFromSVG(svgContent);
         
-        // Draw text on canvas - pass the height parameter
+        // Draw text on canvas
         renderTextOnCanvas(ctx, canvas.width, canvas.height, textInfo);
         
         // Execute callback with canvas and SVG content
@@ -352,12 +394,12 @@ function processImage(svgContent, callback) {
     };
     
     originalImg.onerror = function() {
-        console.error("Failed to load original image");
+        console.error("Failed to load original image:", currentImagePath);
         callback(null, svgContent, true);
     };
     
     // Load the original image
-    originalImg.src = BACKGROUND_IMAGE;
+    originalImg.src = currentImagePath;
 }
 
 function extractTextFromSVG(svgContent) {
