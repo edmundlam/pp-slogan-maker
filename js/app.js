@@ -413,15 +413,78 @@ function cycleBackgroundImage() {
     // Update current image key
     currentImageKey = nextImageKey;
     
-    // Save selection to localStorage
-    localStorage.setItem('pp-slogan-maker-image', nextImageKey);
-    
     // Update the button text to show current image name
     updateCycleButtonText();
     
-    // Generate a new slogan with the selected image
-    updateSlogan();
-  }
+    // Get current slogan from the image
+    const currentSlogan = getCurrentSlogan();
+    
+    // Update the image using the current slogan instead of generating a new one
+    updateSloganWithText(currentSlogan.en, currentSlogan.fr);
+}
+
+// Helper function to get the current slogan from the displayed image
+function getCurrentSlogan() {
+    const img = document.querySelector('#podium-container img');
+    
+    if (!img || !img.dataset.svgContent) {
+        // If no image is found, return empty strings
+        return { en: "", fr: "" };
+    }
+    
+    // Parse the SVG to extract the slogan text
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(img.dataset.svgContent, "image/svg+xml");
+    const texts = svgDoc.querySelectorAll('text.slogan-text');
+    
+    let result = {
+        en: "",
+        fr: ""
+    };
+    
+    // Extract text content from the SVG
+    if (texts.length >= 2) {
+        result.en = texts[0].textContent.trim();
+        result.fr = texts[1].textContent.trim();
+    }
+    
+    return result;
+}
+
+// Helper function to update the slogan with specific text
+function updateSloganWithText(enText, frText) {
+    // Get the container
+    const container = document.getElementById('podium-container');
+    
+    // Show loading state
+    container.innerHTML = '<div class="loading">Generating slogan...</div>';
+    
+    // Generate the shareable image with the provided slogan
+    createSharingImage(enText, frText)
+        .then(result => {
+            // Create an image with the SVG data URI
+            const img = document.createElement('img');
+            img.src = result.url;
+            img.alt = `Campaign slogan: ${enText} / ${frText}`;
+            img.className = 'fade-in';
+            
+            // Store SVG content for sharing
+            img.dataset.svgContent = result.svgContent;
+            
+            // Clear container and add the new image
+            container.innerHTML = '';
+            container.appendChild(img);
+        })
+        .catch(error => {
+            console.error("Error creating slogan image:", error);
+            container.innerHTML = `
+                <div class="error-message">
+                    <p>Error generating image</p>
+                    <p>English: ${enText}</p>
+                    <p>French: ${frText}</p>
+                </div>`;
+        });
+}
 
 // Function to update the cycle button text with current image name
 function updateCycleButtonText() {
@@ -430,15 +493,6 @@ function updateCycleButtonText() {
       const currentImage = BACKGROUND_IMAGES[currentImageKey];
       cycleButton.title = `Change background (currently: ${currentImage.name})`;
     }
-}
-
-// Function to load the saved image selection
-function loadSavedImageSelection() {
-    const savedImage = localStorage.getItem('pp-slogan-maker-image');
-    if (savedImage && BACKGROUND_IMAGES[savedImage]) {
-      currentImageKey = savedImage;
-    }
-    updateCycleButtonText();
 }
 
 
@@ -782,9 +836,6 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(window.customSloganTimer);
         window.customSloganTimer = setTimeout(updateCustomSlogan, 300);
     });
-
-    // Load saved image selection
-    loadSavedImageSelection();
     
     // Set up cycle button handler
     document.getElementById('cycleImageButton').addEventListener('click', cycleBackgroundImage);
