@@ -68,8 +68,8 @@
     text-align: center;
   }
 
-  #generateButton {
-    background-color: #db616c; /* Red */
+  /* Base button styling - shared properties for all buttons */
+  .base-button {
     color: white;
     border: none;
     border-radius: 30px;
@@ -79,68 +79,71 @@
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-left: 10px;
   }
 
-  #generateButton:hover {
-    background-color: #d53a3a; /* Darker red */
+  .base-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
   }
 
-  #generateButton:active {
+  .base-button:active {
     transform: translateY(0);
   }
 
-  /* Share button styling */
-  #shareButton {
+  /* Red button styling */
+  .red-button {
+    background-color: #db616c; /* Red */
+  }
+
+  .red-button:hover {
+    background-color: #d53a3a; /* Darker red */
+  }
+
+  /* Blue button styling */
+  .blue-button {
+    background-color: #1d3557; /* Dark blue */
+  }
+
+  .blue-button:hover {
+    background-color: #0a2472; /* Darker blue */
+  }
+
+  /* Light blue button styling */
+  .light-blue-button {
+    background-color: #4cc9f0; /* Light blue */
+  }
+
+  .light-blue-button:hover {
+    background-color: #4895ef; /* Slightly darker blue */
+  }
+
+  /* White button styling */
+  .white-button {
     background-color: #ffffff; /* White */
     color: #121212; /* Dark text for contrast */
-    border: none;
-    border-radius: 30px;
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-left: 10px;
   }
 
-  #shareButton:hover {
+  .white-button:hover {
     background-color: #f1faee; /* Off-white */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
   }
 
-  #shareButton:active {
-    transform: translateY(0);
+  /* Active state for buttons */
+  .base-button.active {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
-  /* Download button styling */
-  #downloadButton {
-    background-color: #1d3557; /* Blue */
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-left: 10px;
+  /* Responsive adjustments for buttons */
+  @media (max-width: 768px) {
+    .base-button {
+      margin-left: 0;
+      margin-top: 10px;
+      width: 100%;
+      max-width: 300px;
+    }
   }
 
-  #downloadButton:hover {
-    background-color: #0a2472; /* Darker blue */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  #downloadButton:active {
-    transform: translateY(0);
-  }
-
+  
   
   /* Footer styling */
   footer {
@@ -206,72 +209,7 @@
   }
 
 
-  /* Image cycle button styling */
-  #cycleImageButton {
-    background-color: #db616c; /* Purple */
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-left: 10px;
-  }
-
-  #cycleImageButton:hover {
-    background-color: #d53a3a; /* Lighter purple */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  #cycleImageButton:active {
-    transform: translateY(0);
-  }
-
-  /* Responsive adjustment for the image cycle button */
-  @media (max-width: 768px) {
-    #cycleImageButton {
-      margin-left: 0;
-      margin-top: 10px;
-      width: 100%;
-      max-width: 300px;
-    }
-  }
-
-
-  /* Customize button styling */
-  #customizeButton {
-    background-color: #4cc9f0; /* Light blue */
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-left: 10px;
-  }
-
-  #customizeButton:hover {
-    background-color: #4895ef; /* Slightly darker blue */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  #customizeButton:active {
-    transform: translateY(0);
-  }
-
-  #customizeButton.active {
-    background-color: #4895ef; /* Darker blue when active */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
+  
   /* Customize form styling */
   .customize-form {
     background-color: #1e1e24;
